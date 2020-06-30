@@ -4,6 +4,7 @@ import Dashboard from './content/Dashboard'
 import Setting from './content/Setting';
 import Address from './content/Address';
 import Logs from './content/Logs';
+import About from './content/About';
 import './AppContent.sass';
 
 class AppContent extends Component {
@@ -21,6 +22,7 @@ class AppContent extends Component {
                     <Route path="/setting**" component={Setting} exact/>
                     <Route path="/address" component={Address} exact/>
                     <Route path="/logs" component={Logs} exact/>
+                    <Route path="/about" component={About} exact/>
                 </Switch>
                 <div className="tabBarMask"/>
             </div>

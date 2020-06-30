@@ -5,6 +5,7 @@ import SettingMenu from './setting/SettingMenu'
 import SlotSetting from './setting/SlotSetting'
 import ConnectionSetting from './setting/ConnectionSetting'
 import SlotDetailSetting from './setting/SlotDetailSetting'
+import SystemSetting from './setting/SystemSetting'
 import {connect} from 'react-redux';
 
 const mapAction2Props = (dispatch, props) => {
@@ -28,6 +29,7 @@ class Setting extends Component {
                     <Route path="/setting/slot" component={SlotSetting} exact/>
                     <Route path="/setting/connection" component={ConnectionSetting} exact/>
                     <Route path="/setting/slot-detail/:id" component={SlotDetailSetting} exact/>
+                    <Route path="/setting/system" component={SystemSetting} exact/>
                 </Switch>
             </Router>
         )

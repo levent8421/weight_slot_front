@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {fetchDetail, updateSlot, zeroOne, toggleELabelState} from '../../../api/slot';
+import {fetchDetail, toggleELabelState, updateSlot, zeroOne} from '../../../api/slot';
 import {ActionSheet, Button, InputItem, List, Switch, Toast, WingBlank} from 'antd-mobile';
 import {setTitle} from "../../../store/actionCreators";
 import {connect} from 'react-redux';
@@ -59,14 +59,26 @@ class SlotDetailSetting extends Component {
                     </Item>
                     <Item key="skuApw">
                         <InputItem placeholder="SKU Apw" value={slot.skuApw}
-                                   onChange={text => this.setUpdateSlotProp({skuApw: text})}>SKUApw</InputItem>
+                                   type="number"
+                                   onChange={text => this.setUpdateSlotProp({skuApw: text})}>Apw</InputItem>
                     </Item>
                     <Item key="skuTolerance">
-                        <InputItem placeholder="SKU Apw" value={slot.skuTolerance}
-                                   onChange={text => this.setUpdateSlotProp({skuTolerance: text})}>SKUTolerance</InputItem>
+                        <InputItem placeholder="SKU Tolerance" value={slot.skuTolerance}
+                                   type="number"
+                                   onChange={text => this.setUpdateSlotProp({skuTolerance: text})}>Tolerance</InputItem>
+                    </Item>
+                    <Item key="skuShelfLifeOpenDays">
+                        <InputItem placeholder="SKU ShelfLifeOpenDays" value={slot.skuShelfLifeOpenDays}
+                                   type="number"
+                                   onChange={text => this.setUpdateSlotProp({skuShelfLifeOpenDays: text})}>
+                            SLO Days
+                        </InputItem>
+                    </Item>
+                    <Item key="applyBtn">
+                        <WingBlank><Button type="primary" onClick={() => this.applyModify()}>Apply
+                            Modify</Button></WingBlank>
                     </Item>
                 </List>
-                <WingBlank><Button type="primary" onClick={() => this.applyModify()}>Apply Modify</Button></WingBlank>
                 <List renderHeader={() => 'ELabel'}>
                     <List.Item
                         key="hasELabel"

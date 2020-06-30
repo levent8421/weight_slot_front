@@ -26,11 +26,11 @@ class SettingMenu extends Component {
     render() {
         return (
             <div className="setting">
-                <List>
+                <List renderHeader={() => 'Settings:'}>
                     <List.Item onClick={() => this.go('/setting/sensor')}>
                         <WhiteSpace/>
                         <Flex justify="between">
-                            <span>Sensor Setting</span>
+                            <span>Sensors</span>
                             <Icon type="right"/>
                         </Flex>
                         <WhiteSpace/>
@@ -38,7 +38,7 @@ class SettingMenu extends Component {
                     <List.Item onClick={() => this.go('/setting/slot')}>
                         <WhiteSpace/>
                         <Flex justify="between">
-                            <span>Slot Setting</span>
+                            <span>Slots</span>
                             <Icon type="right"/>
                         </Flex>
                         <WhiteSpace/>
@@ -46,7 +46,15 @@ class SettingMenu extends Component {
                     <List.Item onClick={() => this.go('/setting/connection')}>
                         <WhiteSpace/>
                         <Flex justify="between">
-                            <span>Connection Setting</span>
+                            <span>Connections</span>
+                            <Icon type="right"/>
+                        </Flex>
+                        <WhiteSpace/>
+                    </List.Item>
+                    <List.Item onClick={() => this.go('/setting/system')}>
+                        <WhiteSpace/>
+                        <Flex justify="between">
+                            <span>System</span>
                             <Icon type="right"/>
                         </Flex>
                         <WhiteSpace/>

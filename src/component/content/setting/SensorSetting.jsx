@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import {Card, Flex, List, Switch} from "antd-mobile";
+import {ActionSheet, Card, Flex, List, Modal, Switch, Toast} from "antd-mobile";
 import {asyncFetchSensors, setTabBarState, setTitle, toggleSensorElable} from "../../../store/actionCreators";
 import {connect} from 'react-redux';
+import FloatButton from '../../commons/FloatButton';
+import {reloadSensors} from "../../../api/sensor";
 
 const mapAction2Props = (dispatch, props) => {
     return {
@@ -49,6 +51,7 @@ class SensorSetting extends Component {
                         </List.Item>))
                     }
                 </List>
+                <FloatButton iconType="ellipsis" onClick={() => this.showOperationActions()}/>
             </div>
         );
     }
@@ -59,6 +62,38 @@ class SensorSetting extends Component {
 
     toggleElabel(sensor, e) {
         this.props.toggleSensorElable(sensor.id, e);
+    }
+
+    showOperationActions() {
+        const buttons = ['Reload Sensors', 'Cancel'];
+        ActionSheet.showActionSheetWithOptions({
+            title: 'Operations',
+            options: buttons,
+            cancelButtonIndex: buttons.length - 1,
+            destructiveButtonIndex: 0,
+        }, index => {
+            if (index === 0) {
+                this.callReloadSensors();
+            }
+        })
+    }
+
+    callReloadSensors() {
+        Modal.alert('Reload', 'Are you sure to reload?',
+            [
+                {
+                    text: 'Yes', onPress: () => {
+                        reloadSensors().then(() => {
+                            Toast.show('Reload Success!', 1, false);
+                        })
+                    }
+                },
+                {
+                    text: 'Cancel', onPress: () => {
+                        Toast.show('Cancel', 1, false);
+                    }
+                }
+            ]);
     }
 }
 
