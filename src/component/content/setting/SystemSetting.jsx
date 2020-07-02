@@ -53,7 +53,10 @@ class SystemSetting extends Component {
                     </Item>
                 </List>
                 <List renderHeader={() => 'Settings'}>
-                    <Item extra={<Switch checked={enableTabBar} onChange={target => this.setEnableTabBar(target)}/>}>
+                    <Item extra={<Switch
+                        checked={enableTabBar}
+                        onChange={target => this.setEnableTabBar(target)}
+                        platform="android"/>}>
                         EnableTabBar
                     </Item>
                 </List>

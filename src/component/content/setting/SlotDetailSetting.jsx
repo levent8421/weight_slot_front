@@ -82,7 +82,10 @@ class SlotDetailSetting extends Component {
                 <List renderHeader={() => 'ELabel'}>
                     <List.Item
                         key="hasELabel"
-                        extra={<Switch checked={slot.hasElabel} onChange={state => this.toggleELabel(state)}/>}>
+                        extra={<Switch
+                            checked={slot.hasElabel}
+                            onChange={state => this.toggleELabel(state)}
+                            platform="android"/>}>
                         Enable ELabel
                     </List.Item>
                 </List>

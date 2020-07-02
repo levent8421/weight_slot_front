@@ -42,7 +42,8 @@ class SensorSetting extends Component {
                                     <Flex justify="between">
                                         <span>ELabel</span>
                                         <Switch checked={sensor.hasElabel}
-                                                onChange={(e) => this.toggleElabel(sensor, e)}/>
+                                                onChange={(e) => this.toggleElabel(sensor, e)}
+                                                platform="android"/>
                                     </Flex>
                                 </Card.Body>
                                 <Card.Footer content={`Slot:[${sensor.slot && sensor.slot.slotNo}]`}
