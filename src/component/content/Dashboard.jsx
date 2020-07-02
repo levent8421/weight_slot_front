@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {asyncFetchDashboardSlotData, setTitle} from '../../store/actionCreators';
 import {connect} from 'react-redux';
-import {Card, Flex, List} from 'antd-mobile';
 import './Dashboard.sass'
-import {asKg, isStable, isWarn} from '../../util/DataConvertor';
+import {Card, Flex, WhiteSpace, WingBlank} from 'antd-mobile';
 
 const mapState2Props = (state, props) => {
     return {
@@ -24,6 +23,7 @@ class Dashboard extends Component {
         super(props);
         this.state = {};
         this.props.setTitle('Dashboard');
+        this.renderSlotCard = this.renderSlotCard.bind(this);
     }
 
     componentDidMount() {
@@ -42,35 +42,52 @@ class Dashboard extends Component {
     }
 
     render() {
+        const _this = this;
         const slots = this.props.slots;
-        const {Item} = List;
         return (
             <div className="dashboard">
-                <List renderHeader={() => 'SLOT LIST'}>
-                    {slots.map(slot => (<Item key={slot.slotNo}>
-                        <Card className={isWarn(slot) ? 'warn' : ''}>
-                            <Card.Header title={slot.slotNo} extra={slot.sku && slot.sku.name}/>
-                            <Card.Body>
-                                <Flex className="slotCard" justify="center">
-                                    <div className="count">
-                                        <span
-                                            className={isWarn(slot) ? 'warn value' : 'value'}>{slot.data && slot.data.count}</span>
-                                        <span className="unit">pis</span>
-                                    </div>
-                                    <div
-                                        className={isStable(slot.data && slot.data.weightState) ? 'weight' : 'weight warn'}>
-                                        <span
-                                            className={isWarn(slot) ? 'warn value' : 'value'}>{isStable(slot.data && slot.data.weightState) ? '' : '~'}{slot.data && asKg(slot.data.weight)}</span>
-                                        <span className="unit">kg</span>
-                                    </div>
-                                </Flex>
-                            </Card.Body>
-                            <Card.Footer content={slot.sku && slot.sku.skuNo}/>
-                        </Card>
-                    </Item>))}
-                </List>
+                <WhiteSpace/>
+                <WingBlank>
+                    <Flex wrap="wrap" justify="between">
+                        {
+                            slots.map(_this.renderSlotCard)
+                        }
+                    </Flex>
+                </WingBlank>
             </div>
         );
+    }
+
+    renderSlotCard(slot) {
+        const sku = slot.sku || {};
+        const data = slot.data || {};
+        return (<Card
+            className="slotCard"
+            onClick={() => this.onSlotCardClick(slot)}
+            key={slot.id}
+            full={true}>
+            <Card.Header
+                title={sku.name}
+            >
+            </Card.Header>
+            <Card.Body>
+                <div className="line">
+                    <span className="pcsTitle">PCS</span>
+                    <span className="slotNo">{slot.slotNo}</span>
+                </div>
+                <div className="pcsValue">
+                    {data.count}
+                </div>
+                <div className="weightValue">
+                    {data.weight}
+                </div>
+            </Card.Body>
+            <Card.Footer extra={sku.skuNo}/>
+        </Card>)
+    }
+
+    onSlotCardClick(slot) {
+        console.log(slot);
     }
 }
 

@@ -7,8 +7,13 @@ import AppContent from './component/AppContent'
 import AppHeader from './component/AppHeader'
 import {BrowserRouter as Router} from 'react-router-dom'
 import history from './util/History'
+import {fetchEnableTabBarAction} from './store/actionCreators';
 
 class App extends React.Component {
+    componentDidMount() {
+        store.dispatch(fetchEnableTabBarAction());
+    }
+
     render() {
         return (
             <Router history={history}>

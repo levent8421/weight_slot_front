@@ -15,3 +15,5 @@ export const TOGGLE_SENSOR_ELABLE = 'sensor.elabel.toggle';
 export const ASYNC_FETCH_CONNECTION = 'connections.fetch.async';
 
 export const DELETE_CONNECTION = 'connection.delete';
+
+export const SET_ENABLE_TAB_BAR = 'connection.delete';

@@ -29,3 +29,11 @@ export const scanPort = () => {
         method: 'get',
     });
 };
+
+
+export const scanDevice = id => {
+    return request({
+        url: `/api/connection/${id}/_scan`,
+        method: 'post',
+    });
+};

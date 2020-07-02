@@ -8,12 +8,13 @@ const mapStateToProps = (state, props) => {
     return {
         ...props,
         showTabBar: state.showTabBar,
+        enableTabBar: state.enableTabBar,
     };
 };
 
 class AppTabBar extends React.Component {
     render() {
-        const showTabBar = this.props.showTabBar;
+        const showTabBar = this.props.showTabBar && this.props.enableTabBar;
         if (showTabBar) {
             return (
                 <div className="appTabBar">

@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import {asyncDeleteConnection, asyncFetchConnection, setTabBarState, setTitle} from '../../../store/actionCreators';
-import {Button, Flex, Icon, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
+import {ActionSheet, Button, Flex, Icon, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
 import {asConnectionType} from '../../../util/DataConvertor';
 import './ConnectionSetting.sass'
-import {createConnection, scanPort} from '../../../api/connection';
+import {createConnection, scanPort, scanDevice} from '../../../api/connection';
 import {connect} from 'react-redux';
 
+const ConnectionOperations = [
+    'Delete',
+    'Start Scan',
+    'Cancel',
+];
 const connectionTypes = [
     {
         label: 'Serial',
@@ -60,17 +65,17 @@ class ConnectionSetting extends Component {
             <div>
                 <List renderHeader={() => 'Connections'}>
                     {
-                        connections.map(connection => (<Item key={connection.id}>
-                            <Flex justify="between" className="connectionItem">
-                                <span className="type">{asConnectionType(connection.type)}</span>
-                                <span className="target">{connection.target}</span>
-                                <Icon className="deleteButton" type="cross-circle"
-                                      onClick={() => this.deleteConnection(connection)}/>
-                            </Flex>
-                        </Item>))
+                        connections.map(connection => (
+                            <Item key={connection.id} extra={<Icon type="right"/>}
+                                  onClick={() => this.showConnectionOperations(connection)}>
+                                <Flex justify="between" className="connectionItem">
+                                    <span className="type">{asConnectionType(connection.type)}</span>
+                                    <span className="target">{connection.target}</span>
+                                </Flex>
+                            </Item>))
                     }
                     <Item key="createButton">
-                        <Button type="primary" onClick={() => this.showCreateDialog()}>Create New</Button>
+                        <Button type="primary" onClick={() => this.showCreateDialog()}>New</Button>
                     </Item>
                 </List>
                 <Modal
@@ -118,7 +123,41 @@ class ConnectionSetting extends Component {
     }
 
     deleteConnection(connection) {
-        this.props.deleteConnection(connection.id);
+        Modal.alert('Delete Connection!', 'Are You Sure delete this connection',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => {
+                        Toast.show('Canceled', 1, false);
+                    }
+                },
+                {
+                    text: 'Delete',
+                    onPress: () => {
+                        this.props.deleteConnection(connection.id);
+                    }
+                }
+            ]);
+    }
+
+    scanConnection(connection) {
+        Modal.alert('Scan Device!', 'Scan Devices for this Connection?',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => {
+                        Toast.show('Canceled', 1, false);
+                    }
+                },
+                {
+                    text: 'Scan',
+                    onPress: () => {
+                        scanDevice(connection.id).then(() => {
+                            Toast.show('Scan Success!', 2, false)
+                        });
+                    }
+                }
+            ]);
     }
 
     showCreateDialog() {
@@ -180,6 +219,24 @@ class ConnectionSetting extends Component {
             target: port,
         };
         this.setState({create});
+    }
+
+    showConnectionOperations(connection) {
+        ActionSheet.showActionSheetWithOptions({
+            title: `${connection.target} Operations`,
+            options: ConnectionOperations,
+            cancelButtonIndex: ConnectionOperations.length - 1,
+            destructiveButtonIndex: 0,
+        }, index => {
+            switch (index) {
+                case 0:
+                    this.deleteConnection(connection);
+                    break;
+                case 1:
+                    this.scanConnection(connection);
+                    break;
+            }
+        })
     }
 }
 

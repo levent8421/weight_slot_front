@@ -41,7 +41,7 @@ class SensorSetting extends Component {
                                 <Card.Body>
                                     <Flex justify="between">
                                         <span>ELabel</span>
-                                        <Switch checked={sensor.hasElable}
+                                        <Switch checked={sensor.hasElabel}
                                                 onChange={(e) => this.toggleElabel(sensor, e)}/>
                                     </Flex>
                                 </Card.Body>

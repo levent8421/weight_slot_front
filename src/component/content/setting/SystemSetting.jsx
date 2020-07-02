@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Button, List, Toast} from 'antd-mobile';
-import {setTitle} from '../../../store/actionCreators';
+import {Button, List, Switch, Toast} from 'antd-mobile';
+import {setEnableTabBarAction, setTitle} from '../../../store/actionCreators';
 import {connect} from 'react-redux';
 import {fetchSystemInfo} from '../../../api/dashboard';
 
@@ -8,6 +8,13 @@ const mapAction2Props = (dispatch, props) => {
     return {
         ...props,
         setTitle: (...args) => dispatch(setTitle(...args)),
+        setEnableTabBar: (...args) => dispatch(setEnableTabBarAction(...args)),
+    };
+};
+const mapState2Props = (state, props) => {
+    return {
+        ...props,
+        enableTabBar: state.enableTabBar,
     };
 };
 
@@ -32,6 +39,7 @@ class SystemSetting extends Component {
     render() {
         const {Item} = List;
         const {systemInfo} = this.state;
+        const {enableTabBar} = this.props;
         return (
             <div className="systemSettings">
                 <List renderHeader={() => 'System Infos'}>
@@ -44,6 +52,11 @@ class SystemSetting extends Component {
                                 disabled={!this.state.killButtonState}>Kill Process</Button>
                     </Item>
                 </List>
+                <List renderHeader={() => 'Settings'}>
+                    <Item extra={<Switch checked={enableTabBar} onChange={target => this.setEnableTabBar(target)}/>}>
+                        EnableTabBar
+                    </Item>
+                </List>
             </div>
         );
     }
@@ -54,6 +67,10 @@ class SystemSetting extends Component {
             killButtonState: false
         });
     }
+
+    setEnableTabBar(target) {
+        this.props.setEnableTabBar(target);
+    }
 }
 
-export default connect(null, mapAction2Props)(SystemSetting);
+export default connect(mapState2Props, mapAction2Props)(SystemSetting);

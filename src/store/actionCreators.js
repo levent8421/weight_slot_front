@@ -3,6 +3,7 @@ import {
     ASYNC_FETCH_DASHBOARD_SLOT_DATA,
     ASYNC_FETCH_SENSORS,
     DELETE_CONNECTION,
+    SET_ENABLE_TAB_BAR,
     SET_ROUTER_PATH,
     SET_TABBAR_STATE,
     SET_TITLE,
@@ -12,6 +13,7 @@ import {
 import {fetchSlotData} from '../api/dashboard';
 import {fetchSensors, toggleElable} from '../api/sensor';
 import {deleteConnection, fetchConnections} from '../api/connection';
+import {fetchEnableTabBar, setEnableTabBar} from '../api/config';
 
 export const setUser = user => {
     return {
@@ -109,4 +111,28 @@ export const asyncDeleteConnection = id => {
             dispatch(action);
         })
     }
+};
+
+export const fetchEnableTabBarAction = () => {
+    return dispatch => {
+        fetchEnableTabBar().then(res => {
+            const action = {
+                type: SET_ENABLE_TAB_BAR,
+                data: res.value === 'true',
+            };
+            dispatch(action);
+        });
+    };
+};
+
+export const setEnableTabBarAction = enable => {
+    return dispatch => {
+        setEnableTabBar(enable).then(() => {
+            const action = {
+                type: SET_ENABLE_TAB_BAR,
+                data: enable,
+            };
+            dispatch(action);
+        });
+    };
 };
