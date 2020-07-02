@@ -5,7 +5,7 @@ import {Provider} from 'react-redux'
 import AppTabBar from './component/AppTabBar'
 import AppContent from './component/AppContent'
 import AppHeader from './component/AppHeader'
-import {BrowserRouter as Router} from 'react-router-dom'
+import {HashRouter as Router} from 'react-router-dom'
 import history from './util/History'
 import {fetchEnableTabBarAction} from './store/actionCreators';
 

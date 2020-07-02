@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {asyncFetchDashboardSlotData, setTitle} from '../../store/actionCreators';
 import {connect} from 'react-redux';
 import './Dashboard.sass'
-import {Card, Flex, WhiteSpace, WingBlank} from 'antd-mobile';
+import {Card, Flex, List, Modal, WhiteSpace, WingBlank} from 'antd-mobile';
+import {asConnectionType, asKg, isStable, isWarn} from '../../util/DataConvertor';
 
 const mapState2Props = (state, props) => {
     return {
@@ -21,7 +22,11 @@ const mapAction2Props = (dispatch, props) => {
 class Dashboard extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            sensors: [],
+            sensorModalVisible: false,
+            operationSlot: {},
+        };
         this.props.setTitle('Dashboard');
         this.renderSlotCard = this.renderSlotCard.bind(this);
     }
@@ -38,12 +43,13 @@ class Dashboard extends Component {
         this.props.fetchSlotData();
         this.fetchTimer = setInterval(() => {
             this.props.fetchSlotData();
-        }, 3000);
+        }, 1000);
     }
 
     render() {
         const _this = this;
         const slots = this.props.slots;
+        const {sensors, operationSlot, sensorModalVisible} = this.state;
         return (
             <div className="dashboard">
                 <WhiteSpace/>
@@ -54,6 +60,31 @@ class Dashboard extends Component {
                         }
                     </Flex>
                 </WingBlank>
+                <Modal visible={sensorModalVisible}
+                       title={`${operationSlot.slotNo} Sensors`}
+                       maskClosable={true}
+                       transparent
+                       footer={[{text: 'OK', onPress: () => this.setState({sensorModalVisible: false})}]}>
+                    <List>
+                        {
+                            sensors.map(sensor => (<List.Item key={sensor.id}>
+                                <Card className={isWarn(sensor.state) ? 'warnBg' : ''}>
+                                    <Card.Header title={sensor.deviceSn} extra={sensor.address485}/>
+                                    <Card.Body>
+                                        <Flex justify="center">
+                                            <Flex.Item>{asConnectionType(sensor.connection.type)}:</Flex.Item>
+                                            <Flex.Item>{sensor.connection.target}</Flex.Item>
+                                        </Flex>
+                                        <Flex justify="between">
+                                            <Flex.Item>State:</Flex.Item>
+                                            <Flex.Item>{sensor.state}</Flex.Item>
+                                        </Flex>
+                                    </Card.Body>
+                                </Card>
+                            </List.Item>))
+                        }
+                    </List>
+                </Modal>
             </div>
         );
     }
@@ -61,8 +92,10 @@ class Dashboard extends Component {
     renderSlotCard(slot) {
         const sku = slot.sku || {};
         const data = slot.data || {};
+        const warn = isWarn(slot);
+        const stable = isStable(slot.data && slot.data.weightState);
         return (<Card
-            className="slotCard"
+            className={`slotCard ${warn ? 'warnBg' : ''}`}
             onClick={() => this.onSlotCardClick(slot)}
             key={slot.id}
             full={true}>
@@ -71,15 +104,15 @@ class Dashboard extends Component {
             >
             </Card.Header>
             <Card.Body>
-                <div className="line">
+                <Flex className="labelLine" justify="between">
                     <span className="pcsTitle">PCS</span>
                     <span className="slotNo">{slot.slotNo}</span>
-                </div>
-                <div className="pcsValue">
+                </Flex>
+                <div className={`pcsValue ${warn ? 'warnText' : ''}`}>
                     {data.count}
                 </div>
-                <div className="weightValue">
-                    {data.weight}
+                <div className={`weightValue ${warn ? 'warnText' : ''}`}>
+                    {stable ? '' : '~'}{asKg(data.weight)}kg
                 </div>
             </Card.Body>
             <Card.Footer extra={sku.skuNo}/>
@@ -87,7 +120,11 @@ class Dashboard extends Component {
     }
 
     onSlotCardClick(slot) {
-        console.log(slot);
+        this.setState({
+            operationSlot: slot,
+            sensors: slot.sensors,
+            sensorModalVisible: true,
+        });
     }
 }
 
