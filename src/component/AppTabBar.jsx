@@ -1,5 +1,5 @@
 import React from 'react'
-import {Icon, TabBar} from 'antd-mobile'
+import {TabBar} from 'antd-mobile'
 import {connect} from 'react-redux';
 import './AppTabBar.sass'
 import {withRouter} from 'react-router-dom';
@@ -13,8 +13,16 @@ const mapStateToProps = (state, props) => {
 };
 
 class AppTabBar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            path: '/',
+        };
+    }
+
     render() {
         const showTabBar = this.props.showTabBar && this.props.enableTabBar;
+        const {path} = this.state;
         if (showTabBar) {
             return (
                 <div className="appTabBar">
@@ -24,13 +32,25 @@ class AppTabBar extends React.Component {
                         barTintColor="white"
                         hidden={!this.props.showTabBar}
                         tabBarPosition="bottom">
-                        <TabBar.Item title="Dashboard" icon={<Icon type="check-circle"/>}
+                        <TabBar.Item title="Dashboard"
+                                     selected={path === '/'}
+                                     icon={<i className="iconfont buttonIcon">&#xe64e;</i>}
+                                     selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe64e;</i>}
                                      onPress={() => this.pushPath('/')}/>
-                        <TabBar.Item title="Logs" icon={<Icon type="check-circle"/>}
+                        <TabBar.Item title="Logs"
+                                     selected={path === '/logs'}
+                                     icon={<i className="iconfont buttonIcon">&#xe60c;</i>}
+                                     selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe60c;</i>}
                                      onPress={() => this.pushPath('/logs')}/>
-                        <TabBar.Item title="Address" icon={<Icon type="check-circle"/>}
+                        <TabBar.Item title="Address"
+                                     selected={path === '/address'}
+                                     icon={<i className="iconfont buttonIcon">&#xe61b;</i>}
+                                     selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe61b;</i>}
                                      onPress={() => this.pushPath('/address')}/>
-                        <TabBar.Item title="Setting" icon={<Icon type="check-circle"/>}
+                        <TabBar.Item title="Setting"
+                                     selected={path === '/setting'}
+                                     icon={<i className="iconfont buttonIcon">&#xe660;</i>}
+                                     selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe660;</i>}
                                      onPress={() => this.pushPath('/setting')}/>
                     </TabBar>
                 </div>)
@@ -40,6 +60,9 @@ class AppTabBar extends React.Component {
     }
 
     pushPath(path) {
+        this.setState({
+            path,
+        });
         this.props.history.push({
             pathname: path,
         })
