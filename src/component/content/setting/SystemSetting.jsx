@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Button, List, Switch, Toast} from 'antd-mobile';
+import {Button, Icon, List, Switch, Toast} from 'antd-mobile';
 import {setEnableTabBarAction, setTitle} from '../../../store/actionCreators';
 import {connect} from 'react-redux';
 import {fetchSystemInfo} from '../../../api/dashboard';
+import {withRouter} from 'react-router-dom';
 
 const mapAction2Props = (dispatch, props) => {
     return {
@@ -47,17 +48,24 @@ class SystemSetting extends Component {
                     <Item key="appVersion" extra={systemInfo.appVersion}>APPVersion</Item>
                     <Item key="dbVersion" extra={systemInfo.dbVersion}>DBVersion</Item>
                     <Item key="pid" extra={systemInfo.pid}>ProcessID</Item>
+                    <Item key="libPath">LibPath: {systemInfo.libPath}</Item>
                     <Item key="kill">
                         <Button type="warning" onClick={() => this.killProcess()}
                                 disabled={!this.state.killButtonState}>Kill Process</Button>
                     </Item>
                 </List>
                 <List renderHeader={() => 'Settings'}>
-                    <Item extra={<Switch
-                        checked={enableTabBar}
-                        onChange={target => this.setEnableTabBar(target)}
-                        platform="android"/>}>
+                    <Item
+                        key="tabBar"
+                        extra={<Switch
+                            checked={enableTabBar}
+                            onChange={target => this.setEnableTabBar(target)}
+                            platform="android"/>}>
                         EnableTabBar
+                    </Item>
+                    <Item key="systemProps" extra={<Icon type="right"/>}
+                          onClick={() => this.props.history.push({pathname: '/setting/system-props'})}>
+                        System Props
                     </Item>
                 </List>
             </div>
@@ -76,4 +84,4 @@ class SystemSetting extends Component {
     }
 }
 
-export default connect(mapState2Props, mapAction2Props)(SystemSetting);
+export default withRouter(connect(mapState2Props, mapAction2Props)(SystemSetting));

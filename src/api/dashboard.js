@@ -7,9 +7,17 @@ export const fetchSlotData = () => {
         hideLoading: true,
     });
 };
+
 export const fetchSystemInfo = () => {
     return request({
         url: '/api/dashboard/system-infos',
+        method: 'get',
+    });
+};
+
+export const fetchSystemProps = () => {
+    return request({
+        url: '/api/dashboard/system-props',
         method: 'get',
     });
 };
