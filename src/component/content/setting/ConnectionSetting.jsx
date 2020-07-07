@@ -3,7 +3,7 @@ import {asyncDeleteConnection, asyncFetchConnection, setTabBarState, setTitle} f
 import {ActionSheet, Button, Flex, Icon, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
 import {asConnectionType} from '../../../util/DataConvertor';
 import './ConnectionSetting.sass'
-import {createConnection, scanPort, scanDevice} from '../../../api/connection';
+import {createConnection, scanDevice, scanPort} from '../../../api/connection';
 import {connect} from 'react-redux';
 
 const ConnectionOperations = [
@@ -234,6 +234,8 @@ class ConnectionSetting extends Component {
                     break;
                 case 1:
                     this.scanConnection(connection);
+                    break;
+                default:
                     break;
             }
         })

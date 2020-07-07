@@ -13,13 +13,16 @@ const showError = (msg) => {
 
 
 export function request(options) {
-    if (!options.hideLoading) {
+    const showLoadingToast = !options.hideLoading;
+    if (showLoadingToast) {
         showLoading();
     }
     return new Promise((resolve, reject) => {
         httpRequest(options)
             .then(res => {
-                hideLoading();
+                if (showLoadingToast) {
+                    hideLoading();
+                }
                 if (res.status !== 200) {
                     showError(`Http Response Status:${res.status}`);
                     reject(res);
@@ -33,7 +36,9 @@ export function request(options) {
                 }
                 resolve(body.data);
             }).catch(err => {
-                hideLoading();
+                if (showLoadingToast) {
+                    hideLoading();
+                }
                 const errStr = err.toString();
                 showError(errStr);
                 reject(err);

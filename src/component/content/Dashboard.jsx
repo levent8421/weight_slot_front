@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {asyncFetchDashboardSlotData, setTitle} from '../../store/actionCreators';
 import {connect} from 'react-redux';
 import './Dashboard.sass'
-import {Card, Flex, List, Modal, WhiteSpace, WingBlank} from 'antd-mobile';
+import {Card, Flex, List, Modal, NoticeBar, SearchBar, Toast, WhiteSpace, WingBlank} from 'antd-mobile';
 import {asConnectionType, asKg, isStable, isWarn} from '../../util/DataConvertor';
+import {highlightBySku} from '../../api/slot';
 
 const mapState2Props = (state, props) => {
     return {
@@ -26,12 +27,15 @@ class Dashboard extends Component {
             sensors: [],
             sensorModalVisible: false,
             operationSlot: {},
+            searchSkuNo: '',
+            noticeSlots: [],
         };
         this.props.setTitle('Dashboard');
         this.renderSlotCard = this.renderSlotCard.bind(this);
     }
 
     componentDidMount() {
+        this.searchBarFocus();
         this.startFetchData();
     }
 
@@ -46,12 +50,29 @@ class Dashboard extends Component {
         }, 1000);
     }
 
+    searchBarFocus() {
+        this.searchBar.focus();
+    }
+
     render() {
         const _this = this;
         const slots = this.props.slots;
-        const {sensors, operationSlot, sensorModalVisible} = this.state;
+        const {sensors, operationSlot, sensorModalVisible, searchSkuNo, noticeSlots} = this.state;
         return (
-            <div className="dashboard">
+            <div className="dashboard" onClick={() => this.searchBarFocus()}>
+                <SearchBar
+                    value={searchSkuNo}
+                    onSubmit={e => this.triggerHighlight(e)}
+                    ref={ref => this.searchBar = ref}
+                    onBlur={() => this.searchBarFocus()}
+                    onChange={searchSkuNo => this.setState({searchSkuNo})}/>
+                {
+                    noticeSlots.map(slot =>
+                        <NoticeBar key={slot.id}
+                                   marqueeProps={{loop: true,}}>
+                            {slot.slotNo}:{slot.skuName},请在开封后{slot.skuShelfLifeOpenDays}天使用
+                        </NoticeBar>)
+                }
                 <WhiteSpace/>
                 <WingBlank>
                     <Flex wrap="wrap" justify="between">
@@ -94,8 +115,15 @@ class Dashboard extends Component {
         const data = slot.data || {};
         const warn = isWarn(slot);
         const stable = isStable(slot.data && slot.data.weightState);
+        let highlight = false;
+        for (const s of this.state.noticeSlots) {
+            if (s.id === slot.id) {
+                highlight = true;
+                break;
+            }
+        }
         return (<Card
-            className={`slotCard ${warn ? 'warnBg' : ''}`}
+            className={`slotCard ${warn ? 'warnBg' : ''} ${highlight ? 'highlight' : ''}`}
             onClick={() => this.onSlotCardClick(slot)}
             key={slot.id}
             full={true}>
@@ -124,6 +152,23 @@ class Dashboard extends Component {
             operationSlot: slot,
             sensors: slot.sensors,
             sensorModalVisible: true,
+        });
+    }
+
+    triggerHighlight(skuNo) {
+        if (skuNo === '' || skuNo.trim() === '') {
+            Toast.show('Please Type a SkuNo!', 1, false);
+            return;
+        }
+        highlightBySku(skuNo).then(res => {
+            this.setState({
+                noticeSlots: res
+            });
+            setTimeout(() => this.setState({noticeSlots: [], searchSkuNo: '',}), 5000);
+        }).catch(() => {
+            this.setState({
+                searchSkuNo: '',
+            });
         });
     }
 }

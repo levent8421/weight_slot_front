@@ -46,3 +46,13 @@ export const toggleELabelState = option => {
         data: {hasElabel: option.hasELabel},
     });
 };
+
+export const highlightBySku = sku => {
+    return request({
+        url: '/api/slot/highlight',
+        method: 'post',
+        data: {
+            skuNo: sku
+        }
+    });
+};

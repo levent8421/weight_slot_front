@@ -64,7 +64,9 @@ class AppHeader extends Component {
                 this.props.history.push({
                     pathname: '/setting/',
                 });
-                break
+                break;
+            default:
+                break;
         }
         this.setState({
             popoverVisible: false
