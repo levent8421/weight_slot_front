@@ -8,6 +8,7 @@ const mapState2Props = (state, props) => {
     return {
         ...props,
         title: state.globalTitle,
+        showHeader: state.showHeader,
     };
 };
 
@@ -20,6 +21,9 @@ class AppHeader extends Component {
     }
 
     render() {
+        if (!this.props.showHeader) {
+            return null;
+        }
         const {title} = this.props;
         return (
             <div className="appHeader">

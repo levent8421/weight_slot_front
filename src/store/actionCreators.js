@@ -3,6 +3,7 @@ import {
     ASYNC_FETCH_DASHBOARD_SLOT_DATA,
     ASYNC_FETCH_SENSORS,
     DELETE_CONNECTION,
+    SET_ENABLE_HEADER,
     SET_ENABLE_TAB_BAR,
     SET_ROUTER_PATH,
     SET_TABBAR_STATE,
@@ -134,5 +135,12 @@ export const setEnableTabBarAction = enable => {
             };
             dispatch(action);
         });
+    };
+};
+
+export const showHeader = show => {
+    return {
+        type: SET_ENABLE_HEADER,
+        data: show,
     };
 };

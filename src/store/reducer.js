@@ -3,6 +3,7 @@ import {
     ASYNC_FETCH_DASHBOARD_SLOT_DATA,
     ASYNC_FETCH_SENSORS,
     DELETE_CONNECTION,
+    SET_ENABLE_HEADER,
     SET_ENABLE_TAB_BAR,
     SET_ROUTER_PATH,
     SET_TABBAR_STATE,
@@ -13,6 +14,7 @@ import {
 const defaultState = {
     showTabBar: true,
     enableTabBar: false,
+    showHeader: true,
     globalTitle: '重力货道',
     routerPath: null,
     dashboardSlots: [],
@@ -93,6 +95,12 @@ registerReducer(SET_ENABLE_TAB_BAR, (state, action) => {
     return {
         ...state,
         enableTabBar: action.data,
+    };
+});
+registerReducer(SET_ENABLE_HEADER, (state, action) => {
+    return {
+        ...state,
+        showHeader: action.data
     };
 });
 export default (state = defaultState, action) => {

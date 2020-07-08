@@ -16,4 +16,6 @@ export const ASYNC_FETCH_CONNECTION = 'connections.fetch.async';
 
 export const DELETE_CONNECTION = 'connection.delete';
 
-export const SET_ENABLE_TAB_BAR = 'connection.delete';
+export const SET_ENABLE_TAB_BAR = 'system.tabBar.set';
+
+export const SET_ENABLE_HEADER = 'system.header.set';

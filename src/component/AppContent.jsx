@@ -6,6 +6,14 @@ import Address from './content/Address';
 import Logs from './content/Logs';
 import About from './content/About';
 import './AppContent.sass';
+import {connect} from 'react-redux';
+
+const mapState2Props = (state, props) => {
+    return {
+        ...props,
+        showHeader: state.showHeader,
+    };
+};
 
 class AppContent extends Component {
     constructor(props) {
@@ -16,7 +24,9 @@ class AppContent extends Component {
     render() {
         return (
             <div className="appContent">
-                <div className="headerMask"/>
+                {
+                    this.props.showHeader ? <div className="headerMask"/> : null
+                }
                 <Switch>
                     <Route path="/" component={Dashboard} exact/>
                     <Route path="/setting**" component={Setting} exact/>
@@ -30,4 +40,4 @@ class AppContent extends Component {
     }
 }
 
-export default AppContent;
+export default connect(mapState2Props, null)(AppContent);
