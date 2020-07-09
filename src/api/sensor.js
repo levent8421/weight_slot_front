@@ -20,3 +20,15 @@ export const reloadSensors = () => {
         method: 'post',
     });
 };
+
+
+export const setSlotByIds = (sensorIds, slotId) => {
+    return request({
+        url: '/api/sensor/_set-slot-id-by-ids',
+        method: 'post',
+        data: {
+            sensorIds,
+            slotId,
+        }
+    });
+};

@@ -79,7 +79,7 @@ class SlotDetailSetting extends Component {
                             Modify</Button></WingBlank>
                     </Item>
                 </List>
-                <List renderHeader={() => 'ELabel'}>
+                <List renderHeader={() => 'Operations'}>
                     <List.Item
                         key="hasELabel"
                         extra={<Switch
@@ -87,6 +87,11 @@ class SlotDetailSetting extends Component {
                             onChange={state => this.toggleELabel(state)}
                             platform="android"/>}>
                         Enable ELabel
+                    </List.Item>
+                    <List.Item
+                        arrow="horizontal"
+                        onClick={() => this.props.history.push({pathname: `/setting/slot-sensors/${slot.id}`})}>
+                        Sensors
                     </List.Item>
                 </List>
                 <FloatButton iconType="ellipsis" onClick={() => this.openOperation()}/>

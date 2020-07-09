@@ -56,3 +56,11 @@ export const highlightBySku = sku => {
         }
     });
 };
+
+
+export const fetchAllWithSensors = () => {
+    return request({
+        url: '/api/slot/_with-sensors',
+        method: 'get',
+    });
+};
