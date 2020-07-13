@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {asyncFetchDashboardSlotData, setTabBarState, setTitle, showHeader} from '../../store/actionCreators';
 import {connect} from 'react-redux';
 import './Dashboard.sass'
-import {Flex, NoticeBar, SearchBar, Tabs, Toast, WingBlank} from 'antd-mobile';
+import {Flex, List, Modal, NoticeBar, SearchBar, Tabs, Toast, WingBlank} from 'antd-mobile';
 import {asStateString, groupSlots, isDisable, isIncredible, isOffline, isWan} from '../../util/DataConvertor';
 import {highlightBySku} from '../../api/slot';
 import {withRouter} from 'react-router-dom';
@@ -37,6 +37,7 @@ const TabItems = [
 class Dashboard extends Component {
     constructor(props) {
         super(props);
+        this.rootEle = document;
         this.state = {
             sensors: [],
             sensorModalVisible: false,
@@ -49,16 +50,43 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.searchBarFocus();
         this.startFetchData();
         this.props.showHeader(false);
         this.props.showTabBar(false);
+        this.listenKeyPress();
+    }
+
+    listenKeyPress() {
+        this.rootEle.onkeypress = e => {
+            const sourceTagName = e.target.tagName.toLowerCase();
+            if (sourceTagName !== 'body') {
+                return;
+            }
+            const keyCode = e.keyCode;
+            if (keyCode === 13) {
+                this.triggerHighlight(this.state.searchSkuNo);
+            } else {
+                this.appendSearchSku(String.fromCharCode(keyCode));
+            }
+        };
+    }
+
+    appendSearchSku(c) {
+        const {searchSkuNo} = this.state;
+        this.setState({
+            searchSkuNo: searchSkuNo + c,
+        })
     }
 
     componentWillUnmount() {
         clearInterval(this.fetchTimer);
         this.props.showHeader(true);
         this.props.showTabBar(true);
+        this.cancelKeyPress();
+    }
+
+    cancelKeyPress() {
+        this.rootEle.onkeypress = null;
     }
 
     startFetchData() {
@@ -68,13 +96,9 @@ class Dashboard extends Component {
         }, 10 * 1000);
     }
 
-    searchBarFocus() {
-        this.searchBar.focus();
-    }
-
     render() {
         const slots = this.props.slots;
-        const {searchSkuNo, noticeSlots} = this.state;
+        const {searchSkuNo, noticeSlots, sensorModalVisible, operationSlot, sensors} = this.state;
         const groupedSlots = groupSlots(slots);
         this.highlightSlotIds = {};
         for (let slot of noticeSlots) {
@@ -82,20 +106,15 @@ class Dashboard extends Component {
         }
         const firstNoticeSlot = noticeSlots ? noticeSlots[0] : null;
         return (
-            <div className="dashboard" onClick={() => this.searchBarFocus()}>
+            <div className="dashboard">
                 <Tabs tabs={TabItems} onChange={(tab, index) => this.onTabChange(tab, index)}/>
                 <SearchBar
                     value={searchSkuNo}
                     onSubmit={e => this.triggerHighlight(e)}
-                    ref={ref => this.searchBar = ref}
-                    onBlur={() => this.searchBarFocus()}
                     onChange={searchSkuNo => this.setState({searchSkuNo})}/>
                 <div className="notice-list">
                     {
-                        firstNoticeSlot ? (slot => (
-                            <NoticeBar className="notice">{slot.skuName}, 开封后保质期
-                                <span className="days">{slot.skuShelfLifeOpenDays}</span>天
-                            </NoticeBar>))(firstNoticeSlot) : null
+                        this.renderNoticeBar(firstNoticeSlot)
                     }
                 </div>
                 <div className="slot-groups">
@@ -103,8 +122,43 @@ class Dashboard extends Component {
                         groupedSlots.map(group => this.renderGroupItem(group))
                     }
                 </div>
+                <Modal visible={sensorModalVisible}
+                       title={`Sensors for ${operationSlot.slotNo}`}
+                       transparent
+                       maskClosable={true}
+                       footer={[{text: 'OK', onPress: () => this.setState({sensorModalVisible: false})}]}>
+                    <List renderHeader={() => 'Sensors'}>
+                        {
+                            sensors ? sensors.map(sensor => (<List.Item
+                                    extra={asStateString(sensor.state)}
+                                    key={sensor.id}>
+                                    {sensor.deviceSn}
+                                    <List.Item.Brief>{sensor.address485}</List.Item.Brief>
+                                </List.Item>)) :
+                                <List.Item>Empty List</List.Item>
+                        }
+                    </List>
+                </Modal>
             </div>
         );
+    }
+
+    renderNoticeBar(slot) {
+        if (!slot) {
+            return;
+        }
+        const content = [];
+        content.push(slot.skuName);
+        if (slot.skuShelfLifeOpenDays) {
+            content.push('，开封后保质期');
+            content.push((<span className="days">{slot.skuShelfLifeOpenDays}</span>));
+            content.push('天');
+        } else {
+            content.push('，开封后保质期未设置！');
+        }
+        return (<NoticeBar className="notice">
+            {content}
+        </NoticeBar>)
     }
 
     renderGroupItem(group) {
