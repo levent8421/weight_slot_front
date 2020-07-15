@@ -93,7 +93,7 @@ class Dashboard extends Component {
         this.props.fetchSlotData();
         this.fetchTimer = setInterval(() => {
             this.props.fetchSlotData();
-        }, 10 * 1000);
+        }, 1000);
     }
 
     render() {
