@@ -86,7 +86,7 @@ class ConnectionSetting extends Component {
                         {text: 'Cancel', onPress: () => this.setState({createDialogVisible: false})},
                         {text: 'Create', onPress: () => this.createConnection()},
                     ]}
-                    maskClosable={true}>
+                    onClose={() => this.setState({createDialogVisible: false})}>
                     <List title="Connection">
                         <Picker data={connectionTypes} title="Connection Type" cols={1}
                                 extra="Choose"

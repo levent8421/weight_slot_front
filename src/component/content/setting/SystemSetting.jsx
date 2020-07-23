@@ -4,6 +4,7 @@ import {setEnableTabBarAction, setTitle} from '../../../store/actionCreators';
 import {connect} from 'react-redux';
 import {fetchSystemInfo} from '../../../api/dashboard';
 import {reloadLibPath} from '../../../api/serial';
+import {stopWeightService} from '../../../api/sensor';
 import {withRouter} from 'react-router-dom';
 
 const mapAction2Props = (dispatch, props) => {
@@ -71,6 +72,9 @@ class SystemSetting extends Component {
                           onClick={() => this.props.history.push({pathname: '/setting/system-props'})}>
                         System Props
                     </Item>
+                    <Item key="stopService">
+                        <Button type="warning" onClick={() => this.stopWeightService()}>Stop Weight Service</Button>
+                    </Item>
                 </List>
                 <Modal
                     visible={libLoadVisible}
@@ -122,6 +126,12 @@ class SystemSetting extends Component {
                 libLoadVisible: false,
             })
         })
+    }
+
+    stopWeightService() {
+        stopWeightService().then(() => {
+            Toast.show("Stop Weight Service Success!");
+        });
     }
 }
 

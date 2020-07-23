@@ -32,3 +32,18 @@ export const setSlotByIds = (sensorIds, slotId) => {
         }
     });
 };
+
+
+export const stopWeightService = () => {
+    return request({
+        url: '/api/sensor/_stop-weight-service',
+        method: 'post',
+    });
+};
+
+export const dumpAll = () => {
+    return request({
+        url: '/api/sensor/_dump-all',
+        method: 'get',
+    });
+};

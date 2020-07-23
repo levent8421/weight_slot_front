@@ -59,6 +59,14 @@ class SettingMenu extends Component {
                         </Flex>
                         <WhiteSpace/>
                     </List.Item>
+                    <List.Item onClick={() => this.go('/setting/overview')}>
+                        <WhiteSpace/>
+                        <Flex justify="between">
+                            <span>Overview</span>
+                            <Icon type="right"/>
+                        </Flex>
+                        <WhiteSpace/>
+                    </List.Item>
                 </List>
             </div>
         );

@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Icon, NavBar, Popover} from "antd-mobile";
+import {Icon, Modal, NavBar, Popover, Toast} from "antd-mobile";
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom'
 import './AppHeader.sass';
+import {reloadSensors} from "../api/sensor";
 
 const mapState2Props = (state, props) => {
     return {
@@ -46,6 +47,8 @@ class AppHeader extends Component {
                                     data-seed="logId">About</Item>),
                              (<Item key="settings" value="settings"
                                     style={{whiteSpace: 'nowrap'}}>Settings</Item>),
+                             (<Item key="reload" value="reload"
+                                    style={{whiteSpace: 'nowrap'}}>Reload</Item>),
                          ]}
                          onSelect={e => this.onPopoverSelect(e)}
         >
@@ -69,12 +72,32 @@ class AppHeader extends Component {
                     pathname: '/setting/',
                 });
                 break;
+            case 'reload':
+                this.doReloadSensors();
+                break;
             default:
                 break;
         }
         this.setState({
             popoverVisible: false
         });
+    }
+
+    doReloadSensors() {
+        Modal.alert('Reload Sensors', 'Reload sensors from database into weightService',
+            [
+                {
+                    text: 'Cancel',
+                },
+                {
+                    text: 'Yes',
+                    onPress: () => {
+                        reloadSensors().then(() => {
+                            Toast.show('Reload Success!');
+                        });
+                    },
+                },
+            ]);
     }
 }
 

@@ -125,8 +125,8 @@ class Dashboard extends Component {
                 <Modal visible={sensorModalVisible}
                        title={`Sensors for ${operationSlot.slotNo}`}
                        transparent
-                       maskClosable={true}
-                       footer={[{text: 'OK', onPress: () => this.setState({sensorModalVisible: false})}]}>
+                       footer={[{text: 'OK', onPress: () => this.setState({sensorModalVisible: false})}]}
+                       onClose={() => this.setState({sensorModalVisible: false})}>
                     <List renderHeader={() => 'Sensors'}>
                         {
                             sensors ? sensors.map(sensor => (<List.Item
@@ -177,6 +177,10 @@ class Dashboard extends Component {
     }
 
     renderSlotCard(slot) {
+        const sensors = slot.sensors;
+        if (!sensors) {
+            return null;
+        }
         const sku = slot.sku || {};
         const data = slot.data || {};
         let slotCardClassName = 'slot-card';
