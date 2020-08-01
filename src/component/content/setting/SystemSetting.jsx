@@ -51,6 +51,7 @@ class SystemSetting extends Component {
                     <Item key="appName" extra={systemInfo.appName}>APPName</Item>
                     <Item key="appVersion" extra={systemInfo.appVersion}>APPVersion</Item>
                     <Item key="dbVersion" extra={systemInfo.dbVersion}>DBVersion</Item>
+                    <Item key="dbVersionName" extra={systemInfo.dbVersionName}>DBVersionName</Item>
                     <Item key="pid" extra={systemInfo.pid}>ProcessID</Item>
                     <Item key="libPath" extra={<Icon type="right"/>}
                           onClick={() => this.showLibLoadModal()}> LibPath: {systemInfo.libPath}</Item>

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {dumpAll} from '../../../api/sensor';
-import {List, Modal, TextareaItem} from 'antd-mobile';
+import {Button, List, Modal, TextareaItem, WingBlank} from 'antd-mobile';
 
 class Overview extends Component {
     constructor(props) {
@@ -33,6 +33,9 @@ class Overview extends Component {
                         ))
                     }
                 </List>
+                <WingBlank>
+                    <Button onClick={() => this.refresh()} type="primary">Refresh</Button>
+                </WingBlank>
             </div>
         );
     }

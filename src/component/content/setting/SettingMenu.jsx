@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Flex, Icon, List, WhiteSpace} from "antd-mobile";
+import {List} from "antd-mobile";
 import {withRouter} from 'react-router-dom';
 import {setTabBarState, setTitle} from "../../../store/actionCreators";
 import {connect} from 'react-redux';
@@ -27,45 +27,23 @@ class SettingMenu extends Component {
         return (
             <div className="setting">
                 <List renderHeader={() => 'Settings:'}>
-                    <List.Item onClick={() => this.go('/setting/sensor')}>
-                        <WhiteSpace/>
-                        <Flex justify="between">
-                            <span>Sensors</span>
-                            <Icon type="right"/>
-                        </Flex>
-                        <WhiteSpace/>
+                    <List.Item onClick={() => this.go('/setting/sensor')} arrow="horizontal">
+                        Sensors
                     </List.Item>
-                    <List.Item onClick={() => this.go('/setting/slot')}>
-                        <WhiteSpace/>
-                        <Flex justify="between">
-                            <span>Slots</span>
-                            <Icon type="right"/>
-                        </Flex>
-                        <WhiteSpace/>
+                    <List.Item onClick={() => this.go('/setting/slot')} arrow="horizontal">
+                        Slots
                     </List.Item>
-                    <List.Item onClick={() => this.go('/setting/connection')}>
-                        <WhiteSpace/>
-                        <Flex justify="between">
-                            <span>Connections</span>
-                            <Icon type="right"/>
-                        </Flex>
-                        <WhiteSpace/>
+                    <List.Item onClick={() => this.go('/setting/connection')} arrow="horizontal">
+                        Connections
                     </List.Item>
-                    <List.Item onClick={() => this.go('/setting/system')}>
-                        <WhiteSpace/>
-                        <Flex justify="between">
-                            <span>System</span>
-                            <Icon type="right"/>
-                        </Flex>
-                        <WhiteSpace/>
+                    <List.Item onClick={() => this.go('/setting/system')} arrow="horizontal">
+                        System Info
                     </List.Item>
-                    <List.Item onClick={() => this.go('/setting/overview')}>
-                        <WhiteSpace/>
-                        <Flex justify="between">
-                            <span>Overview</span>
-                            <Icon type="right"/>
-                        </Flex>
-                        <WhiteSpace/>
+                    <List.Item arrow="horizontal" onClick={() => this.go('/setting/system-check')}>
+                        System Check
+                    </List.Item>
+                    <List.Item onClick={() => this.go('/setting/overview')} arrow="horizontal">
+                        Overview
                     </List.Item>
                 </List>
             </div>
