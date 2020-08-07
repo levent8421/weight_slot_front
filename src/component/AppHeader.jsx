@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom'
 import './AppHeader.sass';
 import {reloadSensors} from "../api/sensor";
+import {doZeroAll} from '../api/slot';
 
 const mapState2Props = (state, props) => {
     return {
@@ -49,6 +50,8 @@ class AppHeader extends Component {
                                     style={{whiteSpace: 'nowrap'}}>Settings</Item>),
                              (<Item key="reload" value="reload"
                                     style={{whiteSpace: 'nowrap'}}>Reload</Item>),
+                             (<Item key="doZero" value="reload"
+                                    style={{whiteSpace: 'nowrap'}}>DoZero</Item>),
                          ]}
                          onSelect={e => this.onPopoverSelect(e)}
         >
@@ -74,6 +77,11 @@ class AppHeader extends Component {
                 break;
             case 'reload':
                 this.doReloadSensors();
+                break;
+            case 'doZero':
+                doZeroAll().then(() => {
+                    Toast.show('DoZero Success!', 1, false);
+                });
                 break;
             default:
                 break;

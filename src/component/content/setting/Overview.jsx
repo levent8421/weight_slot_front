@@ -16,7 +16,8 @@ class Overview extends Component {
 
     refresh() {
         dumpAll().then(res => {
-            this.setState({sensors: res})
+            const sensors = res.sort((a, b) => a.address - b.address);
+            this.setState({sensors})
         });
     }
 

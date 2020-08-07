@@ -85,7 +85,8 @@ class SlotSetting extends Component {
 
     fetchSlots() {
         fetchAllSlots().then(res => {
-            this.setState({slots: res})
+            const slots = res.sort((a, b) => a.slotNo.localeCompare(b.slotNo));
+            this.setState({slots})
         })
     }
 }

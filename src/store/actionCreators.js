@@ -62,9 +62,10 @@ export const asyncFetchDashboardSlotData = () => {
 export const asyncFetchSensors = () => {
     return dispatch => {
         fetchSensors().then(res => {
+            const sensors = res.sort((a, b) => a.address - b.address);
             const action = {
                 type: ASYNC_FETCH_SENSORS,
-                data: res
+                data: sensors,
             };
             dispatch(action);
         });
