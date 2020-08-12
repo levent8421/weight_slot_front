@@ -90,3 +90,15 @@ export const asStateString = state => {
     }
     return 'Unknown State:' + state;
 };
+
+export const asCount = data => {
+    const count = data.count;
+    const isStable = data.weightState == 1;
+    if (count === null) {
+        return '~❗';
+    }
+    if (isStable) {
+        return count;
+    }
+    return '~' + count;
+};

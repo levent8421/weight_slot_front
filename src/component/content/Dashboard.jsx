@@ -3,7 +3,7 @@ import {asyncFetchDashboardSlotData, setTabBarState, setTitle, showHeader} from 
 import {connect} from 'react-redux';
 import './Dashboard.sass'
 import {Flex, List, Modal, NoticeBar, SearchBar, Tabs, Toast, WingBlank} from 'antd-mobile';
-import {asStateString, groupSlots, isDisable, isIncredible, isOffline, isWan} from '../../util/DataConvertor';
+import {asKg, asStateString, groupSlots, isDisable, isIncredible, isOffline, isWan,asCount} from '../../util/DataConvertor';
 import {highlightBySku} from '../../api/slot';
 import {withRouter} from 'react-router-dom';
 
@@ -199,6 +199,8 @@ class Dashboard extends Component {
         }
         const incredible = isIncredible(data.toleranceState);
         const state = asStateString(slot.state);
+        const weightInKg = asKg(data.weight);
+        const count = asCount(data);
         return (<div key={slot.id}
                      className={slotCardClassName}
                      onClick={() => this.onSlotCardClick(slot)}>
@@ -207,6 +209,7 @@ class Dashboard extends Component {
                     {slot.slotNo}
                 </div>
                 <div className="state">
+                    <span className="weight">({weightInKg}kg)</span>
                     <span className="dot"/>
                     <span>{state}</span>
                 </div>
@@ -218,7 +221,7 @@ class Dashboard extends Component {
                 </div>
                 <div className="delimiter"/>
                 <div className={`right ${incredible ? 'right-incredible' : ''}`}>
-                    <span className="pcs-value">{data.count}</span>
+                    <span className="pcs-value">{count}</span>
                     <span className="pcs-unit">(数量)</span>
                 </div>
             </Flex>
