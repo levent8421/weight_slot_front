@@ -64,3 +64,13 @@ export const fetchAllWithSensors = () => {
         method: 'get',
     });
 };
+
+export const setCompensationState = state => {
+    return request({
+        url: '/api/slot/_all-compensation',
+        method: 'post',
+        data: {
+            enableCompensation: state,
+        }
+    });
+};

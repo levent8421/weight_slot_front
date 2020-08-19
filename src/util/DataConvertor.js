@@ -93,7 +93,7 @@ export const asStateString = state => {
 
 export const asCount = data => {
     const count = data.count;
-    const isStable = data.weightState == 1;
+    const isStable = data.weightState === 1;
     if (count === null) {
         return '~❗';
     }

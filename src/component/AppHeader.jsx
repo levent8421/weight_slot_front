@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {Icon, Modal, NavBar, Popover, Toast} from "antd-mobile";
+import {ActionSheet, Icon, Modal, NavBar, Popover, Toast} from "antd-mobile";
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom'
 import './AppHeader.sass';
 import {reloadSensors} from "../api/sensor";
-import {doZeroAll} from '../api/slot';
+import {doZeroAll, setCompensationState} from '../api/slot';
 
 const mapState2Props = (state, props) => {
     return {
@@ -13,6 +13,7 @@ const mapState2Props = (state, props) => {
         showHeader: state.showHeader,
     };
 };
+const CompensationActions = ['Enable', 'Disable', 'Cancel'];
 
 class AppHeader extends Component {
     constructor(props) {
@@ -52,6 +53,8 @@ class AppHeader extends Component {
                                     style={{whiteSpace: 'nowrap'}}>Reload</Item>),
                              (<Item key="doZero" value="reload"
                                     style={{whiteSpace: 'nowrap'}}>DoZero</Item>),
+                             (<Item key="compensation" value="compensation"
+                                    style={{whiteSpace: 'nowrap'}}>Compensation</Item>),
                          ]}
                          onSelect={e => this.onPopoverSelect(e)}
         >
@@ -83,11 +86,42 @@ class AppHeader extends Component {
                     Toast.show('DoZero Success!', 1, false);
                 });
                 break;
+            case 'compensation':
+                this.showCompensationOperations();
+                break;
             default:
                 break;
         }
         this.setState({
             popoverVisible: false
+        });
+    }
+
+    showCompensationOperations() {
+        ActionSheet.showActionSheetWithOptions({
+            options: CompensationActions,
+            title: 'Compensation operations',
+            cancelButtonIndex: CompensationActions.length - 1,
+            destructiveButtonIndex: 1,
+        }, index => {
+            const name = CompensationActions[index];
+            switch (name) {
+                case 'Enable':
+                    this.doSetCompensationState(true);
+                    break;
+                case 'Disable':
+                    this.doSetCompensationState(false);
+                    break;
+                default:
+                    break
+            }
+        });
+    }
+
+    doSetCompensationState(state) {
+        setCompensationState(state).then(() => {
+            const message = (state ? 'Enable' : 'Disable') + ' Compensation Success!';
+            Toast.show(message, 1, false);
         });
     }
 
