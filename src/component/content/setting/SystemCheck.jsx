@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {disconnectTcp, fetchDatabaseTables, fetchStatusTable} from '../../../api/systemStatus';
+import {disconnectTcp, fetchDatabaseTables, fetchStatusTable, resetDatabase} from '../../../api/systemStatus';
 import {Button, Flex, List, Modal, Toast} from 'antd-mobile';
 import {connect} from 'react-redux';
 import {setTitle} from '../../../store/actionCreators';
@@ -86,7 +86,16 @@ class SystemCheck extends Component {
                 <List renderHeader={() => 'Database Tables'}>
                     {databaseTables.map(tableName => (<List.Item key={tableName}>{tableName}</List.Item>))}
                     <List.Item>
-                        <Button type="primary" onClick={() => this.refreshDatabaseTables()}>Fetch Table List</Button>
+                        <Flex>
+                            <Flex.Item>
+                                <Button type="warning" onClick={() => this.showDbResetConfirm()}>Reset DB</Button>
+                            </Flex.Item>
+                            <Flex.Item>
+                                <Button type="primary" onClick={() => this.refreshDatabaseTables()}>
+                                    Fetch Table List
+                                </Button>
+                            </Flex.Item>
+                        </Flex>
                     </List.Item>
                 </List>
             </div>
@@ -101,6 +110,18 @@ class SystemCheck extends Component {
                 });
             }
         }])
+    }
+
+    showDbResetConfirm() {
+        Modal.alert('清空数据库？',
+            '该操作将会清空数据库中全部内容，操作完成后需要对货道重新扫描并重新下发库位信息！（该操作无法恢复）',
+            [{text: 'Cancel'}, {text: 'Yes', onPress: () => this.doDbReset()}])
+    }
+
+    doDbReset() {
+        resetDatabase().then(() => {
+            Modal.alert('Database Reset Success!', 'Reset success, please scan again!');
+        });
     }
 }
 

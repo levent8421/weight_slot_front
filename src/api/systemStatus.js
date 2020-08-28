@@ -27,3 +27,11 @@ export const fetchMessageLog = () => {
         method: 'get',
     });
 };
+
+
+export const resetDatabase = () => {
+    return request({
+        url: '/api/status/_db-reset',
+        method: 'post',
+    });
+};

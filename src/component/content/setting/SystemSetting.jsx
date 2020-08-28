@@ -26,7 +26,6 @@ class SystemSetting extends Component {
         super(props);
         this.state = {
             systemInfo: {},
-            killButtonState: true,
             libLoadVisible: false,
             reloadLibPath: '',
         };
@@ -55,10 +54,6 @@ class SystemSetting extends Component {
                     <Item key="pid" extra={systemInfo.pid}>ProcessID</Item>
                     <Item key="libPath" extra={<Icon type="right"/>}
                           onClick={() => this.showLibLoadModal()}> LibPath: {systemInfo.libPath}</Item>
-                    <Item key="kill">
-                        <Button type="warning" onClick={() => this.killProcess()}
-                                disabled={!this.state.killButtonState}>Kill Process</Button>
-                    </Item>
                 </List>
                 <List renderHeader={() => 'Settings'}>
                     <Item
@@ -99,13 +94,6 @@ class SystemSetting extends Component {
                 </Modal>
             </div>
         );
-    }
-
-    killProcess() {
-        Toast.show('Do not kill this process!', 1, false);
-        this.setState({
-            killButtonState: false
-        });
     }
 
     setEnableTabBar(target) {
