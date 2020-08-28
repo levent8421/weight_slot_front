@@ -3,8 +3,17 @@ import {asyncFetchDashboardSlotData, setTabBarState, setTitle, showHeader} from 
 import {connect} from 'react-redux';
 import './Dashboard.sass'
 import {Flex, List, Modal, NoticeBar, SearchBar, Tabs, Toast, WingBlank} from 'antd-mobile';
-import {asKg, asStateString, groupSlots, isDisable, isIncredible, isOffline, isWan,asCount} from '../../util/DataConvertor';
-import {highlightBySku} from '../../api/slot';
+import {
+    asCount,
+    asKg,
+    asStateString,
+    groupSlots,
+    isDisable,
+    isIncredible,
+    isOffline,
+    isWan
+} from '../../util/DataConvertor';
+import {highlightBySku, zeroOne} from '../../api/slot';
 import {withRouter} from 'react-router-dom';
 
 const mapState2Props = (state, props) => {
@@ -125,7 +134,11 @@ class Dashboard extends Component {
                 <Modal visible={sensorModalVisible}
                        title={`Sensors for ${operationSlot.slotNo}`}
                        transparent
-                       footer={[{text: 'OK', onPress: () => this.setState({sensorModalVisible: false})}]}
+                       footer={[
+                           {text: 'OK', onPress: () => this.setState({sensorModalVisible: false})}, {
+                               text: 'DoZero', onPress: () => this.doSlotZero(this.state.operationSlot)
+                           }
+                       ]}
                        onClose={() => this.setState({sensorModalVisible: false})}>
                     <List renderHeader={() => 'Sensors'}>
                         {
@@ -270,6 +283,20 @@ class Dashboard extends Component {
             default:
                 break;
         }
+    }
+
+    doSlotZero(slot) {
+        const {slotNo} = slot;
+        Modal.alert('Do Zero?', `Do zero for this clot[${slotNo}]?`, [
+            {text: 'Cancel'},
+            {text: 'Yes', onPress: () => this.callDoZero(slotNo)}
+        ])
+    }
+
+    callDoZero(slotNo) {
+        zeroOne(slotNo).then(() => {
+            Toast.show(`slot[${slotNo}] Zero success!`);
+        });
     }
 }
 

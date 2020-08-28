@@ -8,8 +8,10 @@ export const doZeroAll = () => {
 };
 
 export const zeroOne = slotNo => {
+    const encodedSlotNo = encodeURIComponent(slotNo);
+    const apiUrl = `/api/slot/${encodedSlotNo}/zero`;
     return request({
-        url: `/api/slot/${slotNo}/zero`,
+        url: apiUrl,
         method: 'post',
     });
 };

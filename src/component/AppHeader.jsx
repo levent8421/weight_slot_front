@@ -52,7 +52,7 @@ class AppHeader extends Component {
                              (<Item key="reload" value="reload"
                                     style={{whiteSpace: 'nowrap'}}>Reload</Item>),
                              (<Item key="doZero" value="reload"
-                                    style={{whiteSpace: 'nowrap'}}>DoZero</Item>),
+                                    style={{whiteSpace: 'nowrap'}}>ZeroAll</Item>),
                              (<Item key="compensation" value="compensation"
                                     style={{whiteSpace: 'nowrap'}}>Compensation</Item>),
                          ]}
@@ -82,9 +82,7 @@ class AppHeader extends Component {
                 this.doReloadSensors();
                 break;
             case 'doZero':
-                doZeroAll().then(() => {
-                    Toast.show('DoZero Success!', 1, false);
-                });
+                this.showZeroAllConfirm();
                 break;
             case 'compensation':
                 this.showCompensationOperations();
@@ -95,6 +93,16 @@ class AppHeader extends Component {
         this.setState({
             popoverVisible: false
         });
+    }
+
+    showZeroAllConfirm() {
+        Modal.alert('Zero All', 'Do zero for all sensors?', [{text: 'Cancel'}, {
+            text: 'Yes', onPress() {
+                doZeroAll().then(() => {
+                    Toast.show('Zero all success!', 1, false);
+                });
+            }
+        }])
     }
 
     showCompensationOperations() {

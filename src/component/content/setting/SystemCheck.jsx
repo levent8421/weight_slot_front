@@ -68,6 +68,10 @@ class SystemCheck extends Component {
                                onClick={() => this.props.history.push({pathname: '/setting/message-log'})}>
                         Message Log
                     </List.Item>
+                    <List.Item arrow="horizontal"
+                               onClick={() => this.props.history.push({pathname: '/setting/sensor-healthy'})}>
+                        Sensor Healthy
+                    </List.Item>
                     <List.Item>
                         <Flex justify="between">
                             <Flex.Item>
