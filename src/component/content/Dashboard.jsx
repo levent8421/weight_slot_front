@@ -215,8 +215,7 @@ class Dashboard extends Component {
         const weightInKg = asKg(data.weight);
         const count = asCount(data);
         return (<div key={slot.id}
-                     className={slotCardClassName}
-                     onClick={() => this.onSlotCardClick(slot)}>
+                     className={slotCardClassName}>
             <Flex className="card-header" justify="between">
                 <div className="slot-no">
                     {slot.slotNo}
@@ -233,7 +232,8 @@ class Dashboard extends Component {
                     <div className="sku-name">{sku.name}</div>
                 </div>
                 <div className="delimiter"/>
-                <div className={`right ${incredible ? 'right-incredible' : ''}`}>
+                <div className={`right ${incredible ? 'right-incredible' : ''}`}
+                     onClick={() => this.onSlotCardClick(slot)}>
                     <span className="pcs-value">{count}</span>
                     <span className="pcs-unit">(数量)</span>
                 </div>

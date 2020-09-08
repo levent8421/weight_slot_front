@@ -46,6 +46,13 @@ class SensorHealthy extends Component {
         const total = packageCounter.totalSuccess + packageCounter.totalErrors;
         const successRate = total === 0 ? 0 : ((packageCounter.totalSuccess / total) * 100).toFixed(0);
         const errorsRate = total === 0 ? 0 : ((packageCounter.totalErrors / total) * 100).toFixed(0);
+
+        const elabelSuccess = packageCounter.elabelSuccess;
+        const elabelErrors = packageCounter.elabelErrors;
+        const eLabelTotal = elabelErrors + elabelSuccess;
+        const elabelSuccessRate = eLabelTotal === 0 ? 0 : ((elabelSuccess / eLabelTotal) * 100).toFixed(0);
+        const elabelErrorosRate = eLabelTotal === 0 ? 0 : ((elabelErrors / eLabelTotal) * 100).toFixed(0);
+        const elabelContinueErrors = packageCounter.elabelContinueErrors;
         return (<Card>
             <Card.Header title={sensor.address} extra={sensor.deviceSn}/>
             <Card.Body className="healthy-package-counter">
@@ -54,18 +61,24 @@ class SensorHealthy extends Component {
                         <div className="total">
                             <p className="title">SUCCESS</p>
                             <p className="value">{packageCounter.totalSuccess}/{successRate}%</p>
+                            <p className="title">ELABEL SUCCESS</p>
+                            <p className="value">{elabelSuccess}/{elabelSuccessRate}%</p>
                         </div>
                     </Flex.Item>
                     <Flex.Item>
                         <div className="error">
-                            <p className="title">ERROR</p>
+                            <p className="title">ERRORS</p>
                             <p className="value">{packageCounter.totalErrors}/{errorsRate}%</p>
+                            <p className="title">ELABEL ERRORS</p>
+                            <p className="value">{elabelErrors}/{elabelErrorosRate}%</p>
                         </div>
                     </Flex.Item>
                     <Flex.Item>
                         <div className="continue">
                             <p className="title">CONTINUE</p>
                             <p className="value">{packageCounter.continueErrors}</p>
+                            <p className="title">ELABEL CONTINUE</p>
+                            <p className="value">{elabelContinueErrors}</p>
                         </div>
                     </Flex.Item>
                 </Flex>

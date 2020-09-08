@@ -64,10 +64,10 @@ registerReducer(ASYNC_FETCH_SENSORS, (state, action) => {
 registerReducer(TOGGLE_SENSOR_ELABLE, (state, action) => {
     const sensors = state.sensors;
     const sensorId = action.data.sensorId;
-    const hasElable = action.data.hasElabel;
+    const hasElabel = action.data.hasElabel;
     for (let sensor of sensors) {
         if (sensor.id === sensorId) {
-            sensor.hasElable = hasElable;
+            sensor.hasElabel = hasElabel;
             break;
         }
     }

@@ -8,9 +8,13 @@ export const fetchSensors = () => {
 };
 
 export const toggleElable = (sensorId, hasElabel) => {
-    return new Promise((resolve, reject) => {
-        resolve();
-    })
+    return request({
+        url: `/api/sensor/${sensorId}/haselabel`,
+        method: 'post',
+        data: {
+            hasElabel: hasElabel
+        }
+    });
 };
 
 
@@ -44,6 +48,14 @@ export const stopWeightService = () => {
 export const dumpAll = () => {
     return request({
         url: '/api/sensor/_dump-all',
+        method: 'get',
+    });
+};
+
+
+export const findSensorById = id => {
+    return request({
+        url: `/api/sensor/${id}`,
         method: 'get',
     });
 };

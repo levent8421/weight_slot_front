@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActionSheet, Card, Flex, List, Modal, Switch, Toast} from "antd-mobile";
+import {ActionSheet, Card, List, Modal, Switch, Toast} from "antd-mobile";
 import {asyncFetchSensors, setTabBarState, setTitle, toggleSensorElable} from "../../../store/actionCreators";
 import {connect} from 'react-redux';
 import FloatButton from '../../commons/FloatButton';
@@ -39,12 +39,16 @@ class SensorSetting extends Component {
                             <Card>
                                 <Card.Header title={`Address:${sensor.address}`} extra={sensor.deviceSn}/>
                                 <Card.Body>
-                                    <Flex justify="between">
-                                        <span>ELabel</span>
-                                        <Switch checked={sensor.hasElabel}
-                                                onChange={(e) => this.toggleElabel(sensor, e)}
-                                                platform="android"/>
-                                    </Flex>
+                                    <List>
+                                        <List.Item extra={<Switch checked={sensor.hasElabel}
+                                                                  onChange={(e) => this.toggleElabel(sensor, e)}
+                                                                  platform="android"/>}>
+                                            ELabel
+                                        </List.Item>
+                                        <List.Item arrow="horizontal" onClick={() => this.toSensorDetails(sensor)}>
+                                            Sensor Params
+                                        </List.Item>
+                                    </List>
                                 </Card.Body>
                                 <Card.Footer content={`Slot:[${sensor.slot && sensor.slot.slotNo}]`}
                                              extra={sensor.slot && sensor.slot.id}/>
@@ -57,12 +61,17 @@ class SensorSetting extends Component {
         );
     }
 
+    toSensorDetails(sensor) {
+        this.props.history.push({pathname: `/setting/${sensor.address}/sensor-details`});
+    }
+
     componentDidMount() {
         this.props.fetchSensors();
     }
 
     toggleElabel(sensor, e) {
-        this.props.toggleSensorElable(sensor.id, e);
+        const sensorId = sensor.id;
+        this.props.toggleSensorElable(sensorId, e);
     }
 
     showOperationActions() {

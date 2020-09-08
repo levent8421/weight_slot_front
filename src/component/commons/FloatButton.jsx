@@ -11,7 +11,6 @@ class FloatButton extends Component {
             bottom: 100,
         };
         this.state = {
-            position: this.defaultPosition,
             down: false,
         };
     }
@@ -22,63 +21,21 @@ class FloatButton extends Component {
     };
 
     render() {
-        const {position, down} = this.state;
+        const {down} = this.state;
         return (
             <div className={"floatButton " + (down ? 'move' : '')}
-                 style={{...position}}
-                 onMouseDown={e => this.onMouseDown(e)}
-                 onMouseUp={() => this.onMouseUp()}
-                 onMouseMove={e => this.onMouseMove(e)}>
+                 style={this.defaultPosition}
+                 onClick={e => this.callOnClick(e)}
+            >
                 <Icon type={this.props.iconType} className="icon"/>
             </div>
         );
     }
 
-    callOnClick() {
+    callOnClick(e) {
         if (this.props.onClick) {
-            this.props.onClick();
+            this.props.onClick(e);
         }
-    }
-
-    setDown(down) {
-        this.setState({down});
-    }
-
-    onMouseDown(e) {
-        this.setDown(true);
-        this._moved = false;
-        this.startPos = {
-            x: e.clientX,
-            y: e.clientY,
-        };
-    }
-
-    onMouseUp() {
-        this.setDown(false);
-        this.defaultPosition = this.state.position;
-        if (!this._moved) {
-            this.callOnClick();
-            this._moved = false;
-        }
-    }
-
-    onMouseMove(e) {
-        if (!this.state.down) {
-            return;
-        }
-        const {clientX, clientY} = e;
-        const dx = this.startPos.x - clientX;
-        const dy = this.startPos.y - clientY;
-        let {right, bottom} = this.defaultPosition;
-        right += dx;
-        bottom += dy;
-        this.setState({
-            position: {
-                right,
-                bottom,
-            }
-        });
-        this._moved = true;
     }
 }
 

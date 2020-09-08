@@ -75,7 +75,7 @@ export const asyncFetchSensors = () => {
 
 export const toggleSensorElable = (sensorId, hasElabel) => {
     return dispatch => {
-        toggleElable().then(() => {
+        toggleElable(sensorId, hasElabel).then(() => {
             const action = {
                 type: TOGGLE_SENSOR_ELABLE,
                 data: {

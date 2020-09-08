@@ -35,3 +35,10 @@ export const resetDatabase = () => {
         method: 'post',
     });
 };
+
+export const sensorParams = address => {
+    return request({
+        url: `/api/status/${address}/_details`,
+        method: 'get'
+    });
+};
