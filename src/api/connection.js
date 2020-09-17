@@ -37,3 +37,11 @@ export const scanDevice = id => {
         method: 'post',
     });
 };
+
+
+export const startScanTempHumiSensors = connectionId => {
+    return request({
+        url: `/api/connection/${connectionId}/_scan-th-device`,
+        method: 'post',
+    });
+};

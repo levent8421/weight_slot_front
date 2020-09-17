@@ -3,12 +3,13 @@ import {asyncDeleteConnection, asyncFetchConnection, setTabBarState, setTitle} f
 import {ActionSheet, Button, Flex, Icon, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
 import {asConnectionType} from '../../../util/DataConvertor';
 import './ConnectionSetting.sass'
-import {createConnection, scanDevice, scanPort} from '../../../api/connection';
+import {createConnection, scanDevice, scanPort, startScanTempHumiSensors} from '../../../api/connection';
 import {connect} from 'react-redux';
 
 const ConnectionOperations = [
     'Delete',
-    'Start Scan',
+    'Start Scan WeightSensor',
+    'Start Scan TempHumiditySensor',
     'Cancel',
 ];
 const connectionTypes = [
@@ -221,6 +222,23 @@ class ConnectionSetting extends Component {
         this.setState({create});
     }
 
+    startScanTHSensors(connection) {
+        Modal.alert('Scan TH Device!', 'Scan TemperatureHumidityDevices for this Connection?',
+            [
+                {
+                    text: 'Cancel',
+                },
+                {
+                    text: 'Scan',
+                    onPress: () => {
+                        startScanTempHumiSensors(connection.id).then(() => {
+                            Toast.show('Scan Success!', 2, false)
+                        });
+                    }
+                }
+            ]);
+    }
+
     showConnectionOperations(connection) {
         ActionSheet.showActionSheetWithOptions({
             title: `${connection.target} Operations`,
@@ -234,6 +252,9 @@ class ConnectionSetting extends Component {
                     break;
                 case 1:
                     this.scanConnection(connection);
+                    break;
+                case 2:
+                    this.startScanTHSensors(connection);
                     break;
                 default:
                     break;

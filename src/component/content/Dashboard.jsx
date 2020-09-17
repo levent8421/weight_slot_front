@@ -15,6 +15,7 @@ import {
 } from '../../util/DataConvertor';
 import {highlightBySku, zeroOne} from '../../api/slot';
 import {withRouter} from 'react-router-dom';
+import {fetchDashboardData} from "../../api/dashboard";
 
 const mapState2Props = (state, props) => {
     return {
@@ -48,6 +49,8 @@ class Dashboard extends Component {
         super(props);
         this.rootEle = document;
         this.state = {
+            slots: [],
+            thSensors: [],
             sensors: [],
             sensorModalVisible: false,
             operationSlot: {},
@@ -101,12 +104,63 @@ class Dashboard extends Component {
     startFetchData() {
         this.props.fetchSlotData();
         this.fetchTimer = setInterval(() => {
-            this.props.fetchSlotData();
+            fetchDashboardData().then(res => {
+                const slotData = res.slotData;
+                const thData = res.temperatureHumidityData;
+                const slots = [];
+                const thSensors = [];
+                for (let slotNo in slotData) {
+                    if (slotData.hasOwnProperty(slotNo)) {
+                        slots.push(slotData[slotNo]);
+                    }
+                }
+                for (let id in thData) {
+                    if (thData.hasOwnProperty(id)) {
+                        thSensors.push(thData[id]);
+                    }
+                }
+                this.setState({
+                    slots: slots,
+                    thSensors: thSensors,
+                });
+            });
         }, 1000);
     }
 
+    renderThSensorCard(sensor) {
+        const {data} = sensor;
+        let {temperature, humidity} = data;
+        temperature = temperature && temperature.toFixed(1);
+        humidity = humidity && humidity.toFixed(1);
+        return (<div className="th-card" key={sensor.id}>
+            <div className="card-header">传感器地址: <span>{sensor.address}</span></div>
+            <Flex className="card-body">
+                <Flex.Item>
+                    <p className="name">温度</p>
+                    <p className="value">{temperature}°C</p>
+                </Flex.Item>
+                <Flex.Item>
+                    <p className="name">湿度</p>
+                    <p className="value">{humidity}%</p>
+                </Flex.Item>
+            </Flex>
+        </div>);
+    }
+
+    renderThSensors() {
+        const {thSensors} = this.state;
+        return (<div className="th-sensor-group">
+            <div className="title">温湿度传感器</div>
+            <div className="sensors">
+                {
+                    thSensors.map(sensor => this.renderThSensorCard(sensor))
+                }
+            </div>
+        </div>);
+    }
+
     render() {
-        const slots = this.props.slots;
+        const slots = this.state.slots;
         const {searchSkuNo, noticeSlots, sensorModalVisible, operationSlot, sensors} = this.state;
         const groupedSlots = groupSlots(slots);
         this.highlightSlotIds = {};
@@ -129,6 +183,11 @@ class Dashboard extends Component {
                 <div className="slot-groups">
                     {
                         groupedSlots.map(group => this.renderGroupItem(group))
+                    }
+                </div>
+                <div className="th-sensors">
+                    {
+                        this.renderThSensors()
                     }
                 </div>
                 <Modal visible={sensorModalVisible}

@@ -21,3 +21,11 @@ export const fetchSystemProps = () => {
         method: 'get',
     });
 };
+
+export const fetchDashboardData = () => {
+    return request({
+        url: '/api/dashboard/_data',
+        method: 'get',
+        hideLoading: true,
+    });
+};
