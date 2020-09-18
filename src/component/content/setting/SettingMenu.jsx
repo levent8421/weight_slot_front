@@ -28,7 +28,10 @@ class SettingMenu extends Component {
             <div className="setting">
                 <List renderHeader={() => 'Settings:'}>
                     <List.Item onClick={() => this.go('/setting/sensor')} arrow="horizontal">
-                        Sensors
+                        WeightSensors
+                    </List.Item>
+                    <List.Item onClick={() => this.go('/setting/th-sensor')} arrow="horizontal">
+                        TempHumiditySensors
                     </List.Item>
                     <List.Item onClick={() => this.go('/setting/slot')} arrow="horizontal">
                         Slots

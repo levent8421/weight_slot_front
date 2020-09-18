@@ -151,7 +151,6 @@ $state-font-size: 12px
       color: black
 
     .sensors
-      padding: 0 10px
 
       .th-card
         float: left
@@ -160,21 +159,66 @@ $state-font-size: 12px
         background-color: #F9F7F2
         border-radius: 5px
 
+        .card-body
+          padding: 10px 0
+
+          .inner
+            height: 100%
+            display: flex
+            justify-content: space-around
+            line-height: 2rem
+
+            .delimiter
+              height: 2rem
+              width: 1px
+              background-color: #D9D9D9
+
+            .name
+              font-size: 1rem
+
+            .value
+              font-size: 1.5rem
+              padding-left: 5px
+
+            .value.ok
+              color: #0e80d2
+
+            .value.warn
+              color: #E31C1C
+
         .card-header
           background-color: #D5E9E0
           padding-left: 10px
-          line-height: 1.1rem
           border-radius: 5px 5px 0 0
+          display: flex
+          justify-content: space-between
+          line-height: 16px
 
-        .name
-          color: #3171Fa
-          font-size: 1.3rem
-          text-align: center
-          margin: 0
-          padding: 0
+          .no
+            font-size: 14px
+            padding-left: 5px
 
-        .value
-          text-align: center
-          font-size: 1.2rem
-          margin: 0
-          padding: 0
+          .state
+            font-size: 11px
+            color: #4CA086
+            line-height: 16px
+            padding-right: 5px
+
+            .dot
+              width: 10px
+              height: 10px
+              background-color: #4CA086
+              display: inline-block
+              border-radius: 50%
+              margin: 0 5px
+
+.clear-float
+  clear: both
+
+.bottom-white
+  width: 100%
+  height: 100px
+  background-color: transparent
+  text-align: center
+  line-height: 100px
+  color: transparent

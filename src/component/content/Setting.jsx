@@ -13,6 +13,8 @@ import SystemCheck from './setting/SystemCheck'
 import MessageLog from './setting/MessageLog'
 import SensorHealthy from './setting/SensorHealthy'
 import SensorDetails from './setting/SensorDetails'
+import ThSensorSetting from './setting/ThSensorSetting'
+import ThSensorDetailsSetting from './setting/ThSensorDetailsSetting'
 import {connect} from 'react-redux';
 
 const mapAction2Props = (dispatch, props) => {
@@ -43,7 +45,9 @@ class Setting extends Component {
                     <Route path="/setting/system-check" component={SystemCheck} exact/>
                     <Route path="/setting/message-log" component={MessageLog} exact/>
                     <Route path="/setting/sensor-healthy" component={SensorHealthy} exact/>
+                    <Route path="/setting/th-sensor" component={ThSensorSetting} exact/>
                     <Route path="/setting/:address/sensor-details" component={SensorDetails} exact/>
+                    <Route path="/setting/:id/th-detail" component={ThSensorDetailsSetting} exact/>
                 </Switch>
             </Router>
         )

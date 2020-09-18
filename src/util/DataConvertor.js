@@ -43,8 +43,11 @@ export const isStable = weightState => {
 export const asWeightStateString = state => {
     return state in weightStateTable ? weightStateTable[state] : state;
 };
-
-
+const slotSortWeight = {
+    'S': 1,
+    'D': 2,
+    'F': 3,
+};
 export const groupSlots = slots => {
     const groups = {};
     const putSlot = (name, slot) => {
@@ -56,7 +59,7 @@ export const groupSlots = slots => {
     };
     for (let slot of slots) {
         const slotNo = slot.slotNo;
-        const noItems = slotNo.match(/^(\w+)-(\d+)-(\w+)$/);
+        const noItems = slotNo.match(/^(\w+)-(\w+)-(\w+)$/);
         if (noItems) {
             const groupName = `${noItems[1]}货架第${noItems[2]}层`;
             putSlot(groupName, slot);
@@ -74,7 +77,11 @@ export const groupSlots = slots => {
             slots: groups[name],
         });
     }
-    return res;
+    return res.sort((a, b) => {
+        const aWeight = slotSortWeight[a.name.substring(0, 1)];
+        const bWeight = slotSortWeight[b.name.substring(0, 1)];
+        return aWeight - bWeight;
+    });
 };
 
 const stateTable = {
@@ -101,4 +108,21 @@ export const asCount = data => {
         return count;
     }
     return '~' + count;
+};
+
+const thSensorStateTable = {
+    1: '过高',
+    2: '过低',
+    3: '正常',
+};
+
+export const thSensorStateText = state => {
+    if (state in thSensorStateTable) {
+        return thSensorStateTable[state];
+    }
+    return '未知' + state;
+};
+
+export const thSensorStateWarn = state => {
+    return state !== 3;
 };

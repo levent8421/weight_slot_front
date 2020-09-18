@@ -11,7 +11,9 @@ import {
     isDisable,
     isIncredible,
     isOffline,
-    isWan
+    isWan,
+    thSensorStateText,
+    thSensorStateWarn,
 } from '../../util/DataConvertor';
 import {highlightBySku, zeroOne} from '../../api/slot';
 import {withRouter} from 'react-router-dom';
@@ -50,6 +52,7 @@ class Dashboard extends Component {
         this.rootEle = document;
         this.state = {
             slots: [],
+            groupedSlots: [],
             thSensors: [],
             sensors: [],
             sensorModalVisible: false,
@@ -91,7 +94,9 @@ class Dashboard extends Component {
     }
 
     componentWillUnmount() {
-        clearInterval(this.fetchTimer);
+        if (this.fetchTimer) {
+            clearInterval(this.fetchTimer);
+        }
         this.props.showHeader(true);
         this.props.showTabBar(true);
         this.cancelKeyPress();
@@ -102,7 +107,6 @@ class Dashboard extends Component {
     }
 
     startFetchData() {
-        this.props.fetchSlotData();
         this.fetchTimer = setInterval(() => {
             fetchDashboardData().then(res => {
                 const slotData = res.slotData;
@@ -119,9 +123,11 @@ class Dashboard extends Component {
                         thSensors.push(thData[id]);
                     }
                 }
+                const groupedSlots = groupSlots(slots);
                 this.setState({
                     slots: slots,
                     thSensors: thSensors,
+                    groupedSlots: groupedSlots,
                 });
             });
         }, 1000);
@@ -132,18 +138,42 @@ class Dashboard extends Component {
         let {temperature, humidity} = data;
         temperature = temperature && temperature.toFixed(1);
         humidity = humidity && humidity.toFixed(1);
+        const tempStateText = thSensorStateText(sensor.temperatureState);
+        const humidityStateText = thSensorStateText(sensor.humidityState);
+        const humidityWarn = thSensorStateWarn(sensor.humidityState);
+        const tempWarn = thSensorStateWarn(sensor.temperatureState);
+
+        const tempClass = ['value'];
+        if (tempWarn) {
+            tempClass.push('warn');
+        } else {
+            tempClass.push('ok');
+        }
+        const humidityClass = ['value'];
+        if (humidityWarn) {
+            humidityClass.push('warn');
+        } else {
+            humidityClass.push('ok');
+        }
+
         return (<div className="th-card" key={sensor.id}>
-            <div className="card-header">传感器地址: <span>{sensor.address}</span></div>
-            <Flex className="card-body">
-                <Flex.Item>
-                    <p className="name">温度</p>
-                    <p className="value">{temperature}°C</p>
-                </Flex.Item>
-                <Flex.Item>
-                    <p className="name">湿度</p>
-                    <p className="value">{humidity}%</p>
-                </Flex.Item>
-            </Flex>
+            <div className="card-header">
+                <div className="no">{sensor.no}</div>
+                <div className="state"><span className="dot"/>使用中</div>
+            </div>
+            <div className="card-body">
+                <div className="inner">
+                    <div className="item">
+                        <span className="name">温度:{tempStateText}</span>
+                        <span className={tempClass.join(' ')}>{temperature}°C</span>
+                    </div>
+                    <div className="delimiter"/>
+                    <div className="item">
+                        <span className="name">湿度:{humidityStateText}</span>
+                        <span className={humidityClass.join(' ')}>{humidity}%</span>
+                    </div>
+                </div>
+            </div>
         </div>);
     }
 
@@ -151,18 +181,16 @@ class Dashboard extends Component {
         const {thSensors} = this.state;
         return (<div className="th-sensor-group">
             <div className="title">温湿度传感器</div>
-            <div className="sensors">
+            <WingBlank className="sensors">
                 {
                     thSensors.map(sensor => this.renderThSensorCard(sensor))
                 }
-            </div>
+            </WingBlank>
         </div>);
     }
 
     render() {
-        const slots = this.state.slots;
-        const {searchSkuNo, noticeSlots, sensorModalVisible, operationSlot, sensors} = this.state;
-        const groupedSlots = groupSlots(slots);
+        const {searchSkuNo, noticeSlots, sensorModalVisible, operationSlot, sensors, groupedSlots} = this.state;
         this.highlightSlotIds = {};
         for (let slot of noticeSlots) {
             this.highlightSlotIds[slot.id] = true;
@@ -211,6 +239,10 @@ class Dashboard extends Component {
                         }
                     </List>
                 </Modal>
+                <div className="clear-float"/>
+                <div className="bottom-white">
+                    留白
+                </div>
             </div>
         );
     }
