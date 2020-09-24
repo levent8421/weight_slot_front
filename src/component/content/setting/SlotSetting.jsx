@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActionSheet, Flex, Icon, List, Toast} from 'antd-mobile';
+import {ActionSheet, Flex, List, Toast} from 'antd-mobile';
 import {doZeroAll, fetchAllSlots} from '../../../api/slot';
 import {withRouter} from 'react-router-dom';
 import {setTabBarState, setTitle} from "../../../store/actionCreators";
@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import './SlotSetting.sass';
 import FloatButton from '../../commons/FloatButton';
 
-const OperationActions = ['Refresh', 'Do Zero All', 'Cancel'];
+const OperationActions = ['刷新', '全部清零', '取消'];
 const {Item} = List;
 const mapAction2Props = (dispatch, props) => {
     return {
@@ -27,7 +27,7 @@ class SlotSetting extends Component {
 
     componentDidMount() {
         this.props.setTabBarState(false);
-        this.props.setTitle('Slot Settings');
+        this.props.setTitle('重力货道设置');
         this.fetchSlots();
     }
 
@@ -35,10 +35,10 @@ class SlotSetting extends Component {
         const {slots} = this.state;
         return (
             <div className="slotSetting">
-                <List renderHeader={() => 'Slot List'}>
+                <List renderHeader={() => '重力货道列表'}>
                     {
                         slots.map(slot => (
-                            <Item key={slot.id} extra={<Icon type="right"/>} onClick={() => this.toSlotDetail(slot)}>
+                            <Item key={slot.id} arrow="horizontal" onClick={() => this.toSlotDetail(slot)}>
                                 <Flex justify="between">
                                     <span className="slotNo">{slot.slotNo}</span>
                                     <span className="name">{slot.skuName}</span>
@@ -54,7 +54,7 @@ class SlotSetting extends Component {
     showOperationSheet() {
         ActionSheet.showActionSheetWithOptions({
             options: OperationActions,
-            title: 'Operations',
+            title: '操作选择',
             cancelButtonIndex: OperationActions.length - 1,
             destructiveButtonIndex: 1,
         }, index => {
@@ -79,7 +79,7 @@ class SlotSetting extends Component {
 
     doZeroAll() {
         doZeroAll().then(() => {
-            Toast.show('All Zeroed!');
+            Toast.show('全部货道已经被清零!');
         })
     }
 

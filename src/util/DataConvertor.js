@@ -19,8 +19,8 @@ export const isOffline = state => {
 };
 
 const connectionTypes = {
-    1: 'Serial',
-    2: 'Network',
+    1: '串口',
+    2: '网络',
 };
 
 export const asConnectionType = type => {
@@ -80,7 +80,10 @@ export const groupSlots = slots => {
     return res.sort((a, b) => {
         const aWeight = slotSortWeight[a.name.substring(0, 1)];
         const bWeight = slotSortWeight[b.name.substring(0, 1)];
-        return aWeight - bWeight;
+        if (aWeight !== bWeight) {
+            return aWeight - bWeight;
+        }
+        return a.localeCompare(b);
     });
 };
 
@@ -111,9 +114,9 @@ export const asCount = data => {
 };
 
 const thSensorStateTable = {
-    1: '过高',
-    2: '过低',
-    3: '正常',
+    4: '过高',
+    5: '过低',
+    1: '正常',
 };
 
 export const thSensorStateText = state => {
@@ -124,5 +127,5 @@ export const thSensorStateText = state => {
 };
 
 export const thSensorStateWarn = state => {
-    return state !== 3;
+    return state !== 1;
 };

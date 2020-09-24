@@ -35,7 +35,7 @@ class Overview extends Component {
                     }
                 </List>
                 <WingBlank>
-                    <Button onClick={() => this.refresh()} type="primary">Refresh</Button>
+                    <Button onClick={() => this.refresh()} type="primary">刷新</Button>
                 </WingBlank>
             </div>
         );
@@ -44,9 +44,9 @@ class Overview extends Component {
     renderSensorItem(sensor) {
         const {slot, connection} = sensor;
         return (<div onClick={() => this.onSensorClick(sensor)}>
-            WS:[{sensor.id},{sensor.address}]
-            S:[{slot && slot.id},{slot && slot.slotNo}]
-            C:[{connection && connection.id},{connection && connection.target}]
+            传感器:[id:{sensor.id}/address:{sensor.address}]
+            货道:[id:{slot && slot.id}/No:{slot && slot.slotNo}]
+            连接:[id:{connection && connection.id}/{connection && connection.target}]
         </div>);
     }
 
@@ -54,7 +54,7 @@ class Overview extends Component {
         const {connection, slot} = sensor;
         sensor.slot = null;
         sensor.connection = null;
-        const list = (<List renderHeader={() => 'Sensor'}>
+        const list = (<List renderHeader={() => '传感器'}>
             <TextareaItem value={JSON.stringify(sensor)} autoHeight/>
             <TextareaItem value={JSON.stringify(connection)} autoHeight/>
             <TextareaItem value={JSON.stringify(slot)} autoHeight/>

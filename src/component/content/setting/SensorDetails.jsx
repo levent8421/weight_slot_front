@@ -12,7 +12,7 @@ const mapAction2Props = (dispatch, props) => {
         setTabBarState: (...args) => dispatch(setTabBarState(...args)),
     };
 };
-const operations = ['Refresh', 'Cancel'];
+const operations = ['刷新', '取消'];
 
 class SensorDetails extends Component {
     constructor(props) {
@@ -25,7 +25,7 @@ class SensorDetails extends Component {
     }
 
     componentDidMount() {
-        this.props.setTitle('Sensor Params');
+        this.props.setTitle('传感器详细参数');
         this.props.setTabBarState(false);
         const address = this.props.match.params.address;
         this.refreshParams(address);
@@ -58,18 +58,18 @@ class SensorDetails extends Component {
         const {sensor, slot, sensorParams} = this.state;
         return (
             <div className="sensor-details">
-                <List renderHeader={() => 'Sensor Info'}>
-                    <List.Item extra={sensor.deviceSn}>SN</List.Item>
-                    <List.Item extra={sensor.hasElabel ? 'yes' : 'no'}>ELabel</List.Item>
-                    <List.Item extra={sensor.address}>Address</List.Item>
-                    <List.Item extra={sensor.zeroReference}>ZeroReference</List.Item>
-                    <List.Item extra={slot.slotNo}>SlotNo</List.Item>
-                    <List.Item extra={slot.skuApw}>SkuApw</List.Item>
-                    <List.Item extra={slot.skuName}>SkuName</List.Item>
-                    <List.Item extra={slot.skuTolerance}>SkuTolerance</List.Item>
-                    <List.Item extra={slot.skuNo}>SkuNo</List.Item>
+                <List renderHeader={() => '传感器基本信息'}>
+                    <List.Item extra={sensor.deviceSn}>序列号</List.Item>
+                    <List.Item extra={sensor.hasElabel ? 'yes' : 'no'}>电子标签</List.Item>
+                    <List.Item extra={sensor.address}>地址</List.Item>
+                    <List.Item extra={sensor.zeroReference}>零点偏移</List.Item>
+                    <List.Item extra={slot.slotNo}>绑定货道号</List.Item>
+                    <List.Item extra={slot.skuApw}>SKU单重</List.Item>
+                    <List.Item extra={slot.skuName}>SKU名称</List.Item>
+                    <List.Item extra={slot.skuTolerance}>SKU允差</List.Item>
+                    <List.Item extra={slot.skuNo}>SKU号</List.Item>
                 </List>
-                <List renderHeader={() => 'Sensor Params'}>
+                <List renderHeader={() => '传感器硬件信息'}>
                     {
                         sensorParams.map(param => (
                             <List.Item key={param.name} extra={JSON.stringify(param.value)}>
@@ -85,7 +85,7 @@ class SensorDetails extends Component {
     showOperations() {
         ActionSheet.showActionSheetWithOptions({
             options: operations,
-            title: 'Operations',
+            title: '操作选择',
             cancelButtonIndex: operations.length - 1,
             destructiveButtonIndex: 0,
         }, index => {

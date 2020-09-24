@@ -7,9 +7,9 @@ import {connect} from 'react-redux';
 import FloatButton from '../../commons/FloatButton';
 
 const ActionButtons = [
-    'Do Zero',
-    'Delete',
-    'Cancel',
+    '清零该货道',
+    '删除货道',
+    '取消',
 ];
 const {Item} = List;
 const mapAction2Props = (dispatch, props) => {
@@ -29,14 +29,14 @@ class SlotDetailSetting extends Component {
     }
 
     componentDidMount() {
-        this.props.setTitle(`${this.slotId} Settings`);
+        this.props.setTitle(`${this.slotId} 货道设置`);
         this.fetchSlotInfo();
     }
 
     fetchSlotInfo() {
         fetchDetail(this.slotId).then(res => {
             this.setState({slot: res});
-            this.props.setTitle(`${res.slotNo} Settings`);
+            this.props.setTitle(`${res.slotNo} 货道设置`);
         })
     }
 
@@ -44,39 +44,38 @@ class SlotDetailSetting extends Component {
         const {slot} = this.state;
         return (
             <div className="slotDetail">
-                <List renderHeader={() => 'Slot Info'}>
+                <List renderHeader={() => '货道信息'}>
                     <Item key="slotNo">
-                        <InputItem placeholder="Slot No" value={slot.slotNo}
-                                   onChange={text => this.setUpdateSlotProp({slotNo: text})}>SlotNo</InputItem>
+                        <InputItem placeholder="逻辑货道号" value={slot.slotNo}
+                                   onChange={text => this.setUpdateSlotProp({slotNo: text})}>货道号</InputItem>
                     </Item>
                     <Item key="SkuName">
-                        <InputItem placeholder="Sku Name" value={slot.skuName}
-                                   onChange={text => this.setUpdateSlotProp({skuName: text})}>SKUName</InputItem>
+                        <InputItem placeholder="SKU名称" value={slot.skuName}
+                                   onChange={text => this.setUpdateSlotProp({skuName: text})}>SKU名称</InputItem>
                     </Item>
                     <Item key="skuNo">
-                        <InputItem placeholder="SKU No" value={slot.skuNo}
-                                   onChange={text => this.setUpdateSlotProp({skuNo: text})}>SKUNo</InputItem>
+                        <InputItem placeholder="SKU号" value={slot.skuNo}
+                                   onChange={text => this.setUpdateSlotProp({skuNo: text})}>SKU号</InputItem>
                     </Item>
                     <Item key="skuApw">
-                        <InputItem placeholder="SKU Apw" value={slot.skuApw}
+                        <InputItem placeholder="SKU单重" value={slot.skuApw}
                                    type="number"
-                                   onChange={text => this.setUpdateSlotProp({skuApw: text})}>Apw</InputItem>
+                                   onChange={text => this.setUpdateSlotProp({skuApw: text})}>SKU单重</InputItem>
                     </Item>
                     <Item key="skuTolerance">
-                        <InputItem placeholder="SKU Tolerance" value={slot.skuTolerance}
+                        <InputItem placeholder="SKU允差" value={slot.skuTolerance}
                                    type="number"
-                                   onChange={text => this.setUpdateSlotProp({skuTolerance: text})}>Tolerance</InputItem>
+                                   onChange={text => this.setUpdateSlotProp({skuTolerance: text})}>SKU允差</InputItem>
                     </Item>
                     <Item key="skuShelfLifeOpenDays">
-                        <InputItem placeholder="SKU ShelfLifeOpenDays" value={slot.skuShelfLifeOpenDays}
+                        <InputItem placeholder="开封后保质天数" value={slot.skuShelfLifeOpenDays}
                                    type="number"
                                    onChange={text => this.setUpdateSlotProp({skuShelfLifeOpenDays: text})}>
-                            SLO Days
+                            保质期
                         </InputItem>
                     </Item>
                     <Item key="applyBtn">
-                        <WingBlank><Button type="primary" onClick={() => this.applyModify()}>Apply
-                            Modify</Button></WingBlank>
+                        <WingBlank><Button type="primary" onClick={() => this.applyModify()}>保存</Button></WingBlank>
                     </Item>
                 </List>
                 <List renderHeader={() => 'Operations'}>
@@ -86,12 +85,12 @@ class SlotDetailSetting extends Component {
                             checked={slot.hasElabel}
                             onChange={state => this.toggleELabel(state)}
                             platform="android"/>}>
-                        Enable ELabel
+                        启用电子标签
                     </List.Item>
                     <List.Item
                         arrow="horizontal"
                         onClick={() => this.props.history.push({pathname: `/setting/slot-sensors/${slot.id}`})}>
-                        Sensors
+                        货道传感器管理
                     </List.Item>
                 </List>
                 <FloatButton iconType="ellipsis" onClick={() => this.openOperation()}/>
@@ -101,16 +100,20 @@ class SlotDetailSetting extends Component {
 
     openOperation() {
         ActionSheet.showActionSheetWithOptions({
-            title: 'Operations',
+            title: '操作选择',
             options: ActionButtons,
             destructiveButtonIndex: 1,
             cancelButtonIndex: ActionButtons.length - 1,
         }, buttonIndex => {
-            const button = ActionButtons[buttonIndex];
-            if (button === 'Do Zero') {
-                this.doZero();
-            } else if (button === 'Delete') {
-                Toast.show('Unable To Delete!');
+            switch (buttonIndex) {
+                case 0:
+                    this.doZero();
+                    break;
+                case 1:
+                    Toast.show('暂时不能删除货道', 2, false);
+                    break;
+                default:
+                //Do nothing
             }
         });
     }
@@ -118,7 +121,7 @@ class SlotDetailSetting extends Component {
     doZero() {
         const {slot} = this.state;
         zeroOne(slot.slotNo).then(() => {
-            Toast.show('Do Zero Success!');
+            Toast.show('清零成功!');
         });
     }
 

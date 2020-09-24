@@ -46,15 +46,15 @@ class AppHeader extends Component {
                          visible={popoverVisible}
                          overlay={[
                              (<Item key="about" value="about"
-                                    data-seed="logId">About</Item>),
+                                    data-seed="logId">关于我们</Item>),
                              (<Item key="settings" value="settings"
-                                    style={{whiteSpace: 'nowrap'}}>Settings</Item>),
+                                    style={{whiteSpace: 'nowrap'}}>货道设置</Item>),
                              (<Item key="reload" value="reload"
-                                    style={{whiteSpace: 'nowrap'}}>Reload</Item>),
+                                    style={{whiteSpace: 'nowrap'}}>重新加载</Item>),
                              (<Item key="doZero" value="reload"
-                                    style={{whiteSpace: 'nowrap'}}>ZeroAll</Item>),
+                                    style={{whiteSpace: 'nowrap'}}>全部清零</Item>),
                              (<Item key="compensation" value="compensation"
-                                    style={{whiteSpace: 'nowrap'}}>Compensation</Item>),
+                                    style={{whiteSpace: 'nowrap'}}>补偿管理</Item>),
                          ]}
                          onSelect={e => this.onPopoverSelect(e)}
         >

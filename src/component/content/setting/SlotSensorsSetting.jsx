@@ -12,7 +12,7 @@ const mapAction2Props = (dispatch, props) => {
         setTitle: (...args) => dispatch(setTitle(...args)),
     };
 };
-const SENSOR_OPERATIONS = ['Remove', 'Cancel'];
+const SENSOR_OPERATIONS = ['移除', '取消'];
 
 class SlotSensorsSetting extends Component {
     constructor(props) {
@@ -27,7 +27,7 @@ class SlotSensorsSetting extends Component {
     }
 
     componentDidMount() {
-        this.props.setTitle('Sensors');
+        this.props.setTitle('货道传感器管理');
         const {id} = this.props.match.params;
         fetchDetail(id).then(res => {
             const sensors = res.sensors;
@@ -38,7 +38,7 @@ class SlotSensorsSetting extends Component {
                 slot: res,
                 sensors: sensors,
             });
-            this.props.setTitle(`Sensors For ${res.slotNo}`);
+            this.props.setTitle(`传感器管理[${res.slotNo}]`);
         });
         fetchAllWithSensors().then(res => {
             const pickerData = [];
@@ -68,7 +68,7 @@ class SlotSensorsSetting extends Component {
                        arrow="horizontal"
                        className={`sensor-item ${sensor.changed ? 'sensor-item-changed' : ''}`}
                        onClick={() => this.openSensorOperations(sensor)}
-                       extra={sensorRemoveMode ? 'Click to remove' : ''}>
+                       extra={sensorRemoveMode ? '点击删除' : ''}>
                 {sensor.deviceSn}
             </List.Item>);
         if (sensorRemoveMode) {
@@ -111,7 +111,7 @@ class SlotSensorsSetting extends Component {
         }
         for (let s of selectedSensors) {
             if (s.id === selectedSensor.id) {
-                Toast.show('Duplicate Sensor!', 1, false);
+                Toast.show('传感器重复!', 1, false);
                 return;
             }
         }
@@ -123,10 +123,10 @@ class SlotSensorsSetting extends Component {
         const {slot, sensors, sensorRemoveMode} = this.state;
         return (
             <div>
-                <List renderHeader={() => 'Slot Info'}>
-                    <List.Item extra={slot.slotNo}>Slot NO</List.Item>
-                    <List.Item extra={slot.skuName}>SKU Name</List.Item>
-                    <List.Item extra={slot.skuNo}>SKU NO</List.Item>
+                <List renderHeader={() => '货道信息'}>
+                    <List.Item extra={slot.slotNo}>货道号</List.Item>
+                    <List.Item extra={slot.skuName}>SKU名称</List.Item>
+                    <List.Item extra={slot.skuNo}>SKU号</List.Item>
                 </List>
                 <List renderHeader={() => 'Sensors'}>
                     {
@@ -138,16 +138,16 @@ class SlotSensorsSetting extends Component {
                                 <Flex.Item>
                                     <Button type="warning"
                                             onClick={() => this.setState({sensorRemoveMode: !this.state.sensorRemoveMode})}>
-                                        {sensorRemoveMode ? 'Cancel' : 'Remove'}
+                                        {sensorRemoveMode ? '退出删除' : '删除'}
                                     </Button>
                                 </Flex.Item>
                                 <Flex.Item>
                                     <Button type="ghost" onClick={() => this.addSensor()}
-                                            disabled={sensorRemoveMode}>Add</Button>
+                                            disabled={sensorRemoveMode}>添加</Button>
                                 </Flex.Item>
                                 <Flex.Item>
                                     <Button type="primary" disabled={sensorRemoveMode}
-                                            onClick={() => this.applySensors()}>Apply</Button>
+                                            onClick={() => this.applySensors()}>保存</Button>
                                 </Flex.Item>
                             </Flex>
                         </WingBlank>
@@ -160,14 +160,14 @@ class SlotSensorsSetting extends Component {
     addSensor() {
         for (let sensor of this.state.sensors) {
             if (sensor.id < 0) {
-                Toast.show('Please select a sensor!', 1, false);
+                Toast.show('请选择一个传感器!', 1, false);
                 return;
             }
         }
         const {sensors} = this.state;
         sensors.push({
             id: -1,
-            deviceSn: 'Not Selected',
+            deviceSn: '未选择',
             changed: true,
         });
         this.setState({sensors});
@@ -181,18 +181,18 @@ class SlotSensorsSetting extends Component {
         ActionSheet.showActionSheetWithOptions(
             {
                 options: SENSOR_OPERATIONS,
-                title: `Sensor ${sensor.deviceSn}`,
+                title: `传感器 ${sensor.deviceSn}`,
                 cancelButtonIndex: 2,
                 destructiveButtonIndex: 0,
             },
             index => {
                 if (index === 0) {
-                    Modal.alert('Remove',
-                        `Remove sensor ${sensor.deviceSn}?`,
+                    Modal.alert('移除传感器',
+                        `移除传感器 ${sensor.deviceSn}?`,
                         [
-                            {text: 'Cancel'},
+                            {text: '取消'},
                             {
-                                text: 'Remove',
+                                text: '移除',
                                 onPress: () => this.removeSensor(sensor),
                             }
                         ]);

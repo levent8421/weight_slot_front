@@ -25,7 +25,6 @@ class SensorSetting extends Component {
     constructor(props) {
         super(props);
         this.state = {};
-        this.props.setTitle('Sensor Setting');
         this.props.setTabBarState(false);
     }
 
@@ -33,24 +32,24 @@ class SensorSetting extends Component {
         const {sensors} = this.props;
         return (
             <div className="slotSetting">
-                <List renderHeader={() => 'Sensors'}>
+                <List renderHeader={() => '传感器列表'}>
                     {
                         sensors.map(sensor => (<List.Item key={sensor.id}>
                             <Card>
-                                <Card.Header title={`Address:${sensor.address}`} extra={sensor.deviceSn}/>
+                                <Card.Header title={`地址:${sensor.address}`} extra={sensor.deviceSn}/>
                                 <Card.Body>
                                     <List>
                                         <List.Item extra={<Switch checked={sensor.hasElabel}
                                                                   onChange={(e) => this.toggleElabel(sensor, e)}
                                                                   platform="android"/>}>
-                                            ELabel
+                                            启用电子标签
                                         </List.Item>
                                         <List.Item arrow="horizontal" onClick={() => this.toSensorDetails(sensor)}>
-                                            Sensor Params
+                                            传感器详细参数
                                         </List.Item>
                                     </List>
                                 </Card.Body>
-                                <Card.Footer content={`Slot:[${sensor.slot && sensor.slot.slotNo}]`}
+                                <Card.Footer content={`绑定货道:[${sensor.slot && sensor.slot.slotNo}]`}
                                              extra={sensor.slot && sensor.slot.id}/>
                             </Card>
                         </List.Item>))
@@ -66,6 +65,7 @@ class SensorSetting extends Component {
     }
 
     componentDidMount() {
+        this.props.setTitle('重力传感器设置');
         this.props.fetchSensors();
     }
 
@@ -75,9 +75,9 @@ class SensorSetting extends Component {
     }
 
     showOperationActions() {
-        const buttons = ['Reload Sensors', 'Cancel'];
+        const buttons = ['重新加载', '取消'];
         ActionSheet.showActionSheetWithOptions({
-            title: 'Operations',
+            title: '操作选择',
             options: buttons,
             cancelButtonIndex: buttons.length - 1,
             destructiveButtonIndex: 0,
@@ -89,20 +89,18 @@ class SensorSetting extends Component {
     }
 
     callReloadSensors() {
-        Modal.alert('Reload', 'Are you sure to reload?',
+        Modal.alert('重新加载', '确定重新加载，该操作需等到一段时间（30s）才可生效?',
             [
                 {
-                    text: 'Yes', onPress: () => {
+                    text: '取消',
+                },
+                {
+                    text: '确定', onPress: () => {
                         reloadSensors().then(() => {
-                            Toast.show('Reload Success!', 1, false);
+                            Toast.show('加载成功!', 1, false);
                         })
                     }
                 },
-                {
-                    text: 'Cancel', onPress: () => {
-                        Toast.show('Cancel', 1, false);
-                    }
-                }
             ]);
     }
 }

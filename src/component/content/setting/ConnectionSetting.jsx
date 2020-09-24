@@ -1,24 +1,24 @@
 import React, {Component} from 'react';
 import {asyncDeleteConnection, asyncFetchConnection, setTabBarState, setTitle} from '../../../store/actionCreators';
-import {ActionSheet, Button, Flex, Icon, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
+import {ActionSheet, Button, Flex, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
 import {asConnectionType} from '../../../util/DataConvertor';
 import './ConnectionSetting.sass'
 import {createConnection, scanDevice, scanPort, startScanTempHumiSensors} from '../../../api/connection';
 import {connect} from 'react-redux';
 
 const ConnectionOperations = [
-    'Delete',
-    'Start Scan WeightSensor',
-    'Start Scan TempHumiditySensor',
-    'Cancel',
+    '删除',
+    '扫描重力货道',
+    '扫描温湿度传感器',
+    '取消',
 ];
 const connectionTypes = [
     {
-        label: 'Serial',
+        label: '串口',
         value: 1,
     },
     {
-        label: 'Network',
+        label: '网络',
         value: 2,
     }
 ];
@@ -49,7 +49,7 @@ class ConnectionSetting extends Component {
             },
             serialPorts: []
         };
-        this.props.setTitle('Connection Setting');
+        this.props.setTitle('物理连接设置');
     }
 
     componentDidMount() {
@@ -64,10 +64,10 @@ class ConnectionSetting extends Component {
         const {create} = this.state;
         return (
             <div>
-                <List renderHeader={() => 'Connections'}>
+                <List renderHeader={() => '连接列表'}>
                     {
                         connections.map(connection => (
-                            <Item key={connection.id} extra={<Icon type="right"/>}
+                            <Item key={connection.id} arrow="horizontal"
                                   onClick={() => this.showConnectionOperations(connection)}>
                                 <Flex justify="between" className="connectionItem">
                                     <span className="type">{asConnectionType(connection.type)}</span>
@@ -76,26 +76,26 @@ class ConnectionSetting extends Component {
                             </Item>))
                     }
                     <Item key="createButton">
-                        <Button type="primary" onClick={() => this.showCreateDialog()}>New</Button>
+                        <Button type="primary" onClick={() => this.showCreateDialog()}>创建连接</Button>
                     </Item>
                 </List>
                 <Modal
                     visible={createDialogVisible}
                     transparent
-                    title="Create A Connection"
+                    title="创建连接"
                     footer={[
-                        {text: 'Cancel', onPress: () => this.setState({createDialogVisible: false})},
-                        {text: 'Create', onPress: () => this.createConnection()},
+                        {text: '取消', onPress: () => this.setState({createDialogVisible: false})},
+                        {text: '创建', onPress: () => this.createConnection()},
                     ]}
                     onClose={() => this.setState({createDialogVisible: false})}>
-                    <List title="Connection">
-                        <Picker data={connectionTypes} title="Connection Type" cols={1}
-                                extra="Choose"
+                    <List>
+                        <Picker data={connectionTypes} title="连接类型" cols={1}
+                                extra="请选择"
                                 onChange={e => this.setCreateType(e)}>
                             <List.Item>
                                 <InputItem value={create.type && asConnectionType(create.type)}
                                            disabled={true}
-                                           placeholder="Type"/>
+                                           placeholder="类型"/>
                             </List.Item>
                         </Picker>
                         {
@@ -106,8 +106,8 @@ class ConnectionSetting extends Component {
                                                                                   disabled={this.state.create.type === 1}/></List.Item>);
                                 if (create.type === 1) {
                                     return (<Picker data={this.state.serialPorts}
-                                                    extra="Choose"
-                                                    title="Serial Port List"
+                                                    extra="选择"
+                                                    title="串口列表"
                                                     cols={1}
                                                     onChange={arr => this.setCreateTargetSerial(arr)}>
                                         {input}
@@ -124,16 +124,13 @@ class ConnectionSetting extends Component {
     }
 
     deleteConnection(connection) {
-        Modal.alert('Delete Connection!', 'Are You Sure delete this connection',
+        Modal.alert('删除连接!', '确定删除连接？',
             [
                 {
-                    text: 'Cancel',
-                    onPress: () => {
-                        Toast.show('Canceled', 1, false);
-                    }
+                    text: '取消',
                 },
                 {
-                    text: 'Delete',
+                    text: '删除',
                     onPress: () => {
                         this.props.deleteConnection(connection.id);
                     }
@@ -142,19 +139,16 @@ class ConnectionSetting extends Component {
     }
 
     scanConnection(connection) {
-        Modal.alert('Scan Device!', 'Scan Devices for this Connection?',
+        Modal.alert('扫描重力传感器!', '扫描该连接下的传感器？?',
             [
                 {
-                    text: 'Cancel',
-                    onPress: () => {
-                        Toast.show('Canceled', 1, false);
-                    }
+                    text: '取消',
                 },
                 {
-                    text: 'Scan',
+                    text: '扫描',
                     onPress: () => {
                         scanDevice(connection.id).then(() => {
-                            Toast.show('Scan Success!', 2, false)
+                            Toast.show('扫描已开始!', 2, false)
                         });
                     }
                 }
@@ -179,7 +173,7 @@ class ConnectionSetting extends Component {
 
     setCreateType(types) {
         if (types.length < 1) {
-            Toast.show('Please Choose A Connection Type!');
+            Toast.show('请选择连接类型!');
         }
         const type = types[0];
         const newCreate = {
@@ -211,7 +205,7 @@ class ConnectionSetting extends Component {
 
     setCreateTargetSerial(serialIndexList) {
         if (!serialIndexList) {
-            Toast.show('Please Choose A Serial Port!');
+            Toast.show('请选择串口!');
             return;
         }
         const port = serialIndexList[0];
@@ -223,16 +217,16 @@ class ConnectionSetting extends Component {
     }
 
     startScanTHSensors(connection) {
-        Modal.alert('Scan TH Device!', 'Scan TemperatureHumidityDevices for this Connection?',
+        Modal.alert('扫描温湿度传感器!', '扫描该连接下的温湿度传感器?',
             [
                 {
-                    text: 'Cancel',
+                    text: '取消',
                 },
                 {
-                    text: 'Scan',
+                    text: '扫描',
                     onPress: () => {
                         startScanTempHumiSensors(connection.id).then(() => {
-                            Toast.show('Scan Success!', 2, false)
+                            Toast.show('扫描已开始!', 2, false)
                         });
                     }
                 }
@@ -241,7 +235,7 @@ class ConnectionSetting extends Component {
 
     showConnectionOperations(connection) {
         ActionSheet.showActionSheetWithOptions({
-            title: `${connection.target} Operations`,
+            title: `${connection.target} 操作`,
             options: ConnectionOperations,
             cancelButtonIndex: ConnectionOperations.length - 1,
             destructiveButtonIndex: 0,

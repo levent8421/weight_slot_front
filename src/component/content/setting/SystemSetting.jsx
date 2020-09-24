@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Icon, List, Modal, Switch, TextareaItem, Toast} from 'antd-mobile';
+import {Button, List, Modal, Switch, TextareaItem, Toast} from 'antd-mobile';
 import {setEnableTabBarAction, setTitle} from '../../../store/actionCreators';
 import {connect} from 'react-redux';
 import {fetchSystemInfo} from '../../../api/dashboard';
@@ -32,7 +32,7 @@ class SystemSetting extends Component {
     }
 
     componentDidMount() {
-        this.props.setTitle('System Infos');
+        this.props.setTitle('系统信息');
         fetchSystemInfo().then(res => {
             this.setState({
                 systemInfo: res,
@@ -46,49 +46,49 @@ class SystemSetting extends Component {
         const {enableTabBar} = this.props;
         return (
             <div className="systemSettings">
-                <List renderHeader={() => 'System Infos'}>
-                    <Item key="appName" extra={systemInfo.appName}>APPName</Item>
-                    <Item key="appVersion" extra={systemInfo.appVersion}>APPVersion</Item>
-                    <Item key="dbVersion" extra={systemInfo.dbVersion}>DBVersion</Item>
-                    <Item key="dbVersionName" extra={systemInfo.dbVersionName}>DBVersionName</Item>
-                    <Item key="pid" extra={systemInfo.pid}>ProcessID</Item>
-                    <Item key="libPath" extra={<Icon type="right"/>}
-                          onClick={() => this.showLibLoadModal()}> LibPath: {systemInfo.libPath}</Item>
+                <List renderHeader={() => '系统信息'}>
+                    <Item key="appName" extra={systemInfo.appName}>应用名称</Item>
+                    <Item key="appVersion" extra={systemInfo.appVersion}>应用版本</Item>
+                    <Item key="dbVersion" extra={systemInfo.dbVersion}>数据库版本</Item>
+                    <Item key="dbVersionName" extra={systemInfo.dbVersionName}>数据库版本名</Item>
+                    <Item key="pid" extra={systemInfo.pid}>进程ID</Item>
+                    <Item key="libPath" arrow="horizontal"
+                          onClick={() => this.showLibLoadModal()}> 驱动路径: {systemInfo.libPath}</Item>
                 </List>
-                <List renderHeader={() => 'Settings'}>
+                <List renderHeader={() => '系统设置'}>
                     <Item
                         key="tabBar"
                         extra={<Switch
                             checked={enableTabBar}
                             onChange={target => this.setEnableTabBar(target)}
                             platform="android"/>}>
-                        EnableTabBar
+                        底部标签栏
                     </Item>
-                    <Item key="systemProps" extra={<Icon type="right"/>}
+                    <Item key="systemProps" arrow="horizontal"
                           onClick={() => this.props.history.push({pathname: '/setting/system-props'})}>
-                        System Props
+                        JVM信息
                     </Item>
                     <Item key="stopService">
-                        <Button type="warning" onClick={() => this.stopWeightService()}>Stop Weight Service</Button>
+                        <Button type="warning" onClick={() => this.stopWeightService()}>停止重力服务</Button>
                     </Item>
                 </List>
                 <Modal
                     visible={libLoadVisible}
-                    title="Reload SerialPort Library"
+                    title="重新加载驱动"
                     transparent
                     maskClosable={true}
                     footer={[
                         {
-                            text: 'Cancel',
-                            onPress: () => this.setState({libLoadVisible: false})
+                            text: '取消',
+                            onPress: () => this.showLibLoadModal(false),
                         },
                         {
-                            text: 'Reload',
+                            text: '加载',
                             onPress: () => this.reloadLibrary()
                         },
                     ]}>
                     <TextareaItem
-                        placeholder="Type the SerialPort library Path!"
+                        placeholder="驱动路径!"
                         autoHeight
                         value={reloadLibPath} onChange={e => this.setState({reloadLibPath: e})}/>
                 </Modal>
@@ -100,17 +100,17 @@ class SystemSetting extends Component {
         this.props.setEnableTabBar(target);
     }
 
-    showLibLoadModal() {
+    showLibLoadModal(show = true) {
         const reloadLibPath = this.state.systemInfo.libPath;
         this.setState({
             reloadLibPath,
-            libLoadVisible: true
+            libLoadVisible: show
         });
     }
 
     reloadLibrary() {
         reloadLibPath(this.state.reloadLibPath).then(res => {
-            Toast.show(`Success: [${res}]`);
+            Toast.show(`加载成功: [${res}]`);
             this.setState({
                 libLoadVisible: false,
             })
@@ -119,7 +119,7 @@ class SystemSetting extends Component {
 
     stopWeightService() {
         stopWeightService().then(() => {
-            Toast.show("Stop Weight Service Success!");
+            Toast.show("重力服务已停止!");
         });
     }
 }

@@ -16,7 +16,7 @@ class SettingMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {};
-        this.props.setTitle('Setting');
+        this.props.setTitle('设置');
     }
 
     componentDidMount() {
@@ -28,25 +28,25 @@ class SettingMenu extends Component {
             <div className="setting">
                 <List renderHeader={() => 'Settings:'}>
                     <List.Item onClick={() => this.go('/setting/sensor')} arrow="horizontal">
-                        WeightSensors
+                        重力传感器
                     </List.Item>
                     <List.Item onClick={() => this.go('/setting/th-sensor')} arrow="horizontal">
-                        TempHumiditySensors
+                        温湿度传感器
                     </List.Item>
                     <List.Item onClick={() => this.go('/setting/slot')} arrow="horizontal">
-                        Slots
+                        货道管理
                     </List.Item>
                     <List.Item onClick={() => this.go('/setting/connection')} arrow="horizontal">
-                        Connections
+                        连接管理
                     </List.Item>
                     <List.Item onClick={() => this.go('/setting/system')} arrow="horizontal">
-                        System Info
+                        系统信息
                     </List.Item>
                     <List.Item arrow="horizontal" onClick={() => this.go('/setting/system-check')}>
-                        System Check
+                        系统检查
                     </List.Item>
                     <List.Item onClick={() => this.go('/setting/overview')} arrow="horizontal">
-                        Overview
+                        货道概览信息
                     </List.Item>
                 </List>
             </div>

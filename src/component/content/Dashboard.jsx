@@ -137,40 +137,31 @@ class Dashboard extends Component {
         const {data} = sensor;
         let {temperature, humidity} = data;
         temperature = temperature && temperature.toFixed(1);
-        humidity = humidity && humidity.toFixed(1);
-        const tempStateText = thSensorStateText(sensor.temperatureState);
-        const humidityStateText = thSensorStateText(sensor.humidityState);
-        const humidityWarn = thSensorStateWarn(sensor.humidityState);
-        const tempWarn = thSensorStateWarn(sensor.temperatureState);
-
+        const tempStateText = thSensorStateText(data.temperatureState);
+        const tempWarn = thSensorStateWarn(data.temperatureState);
+        const humidityText = humidity && humidity.toFixed(1);
         const tempClass = ['value'];
         if (tempWarn) {
             tempClass.push('warn');
         } else {
             tempClass.push('ok');
         }
-        const humidityClass = ['value'];
-        if (humidityWarn) {
-            humidityClass.push('warn');
-        } else {
-            humidityClass.push('ok');
-        }
 
         return (<div className="th-card" key={sensor.id}>
             <div className="card-header">
                 <div className="no">{sensor.no}</div>
-                <div className="state"><span className="dot"/>使用中</div>
+                <div className="state"><span>{humidityText}%</span><span className="dot"/>使用中</div>
             </div>
             <div className="card-body">
                 <div className="inner">
                     <div className="item">
-                        <span className="name">温度:{tempStateText}</span>
+                        <span className="name">温度:</span>
                         <span className={tempClass.join(' ')}>{temperature}°C</span>
                     </div>
                     <div className="delimiter"/>
                     <div className="item">
-                        <span className="name">湿度:{humidityStateText}</span>
-                        <span className={humidityClass.join(' ')}>{humidity}%</span>
+                        <span className="name">状态</span>
+                        <span className={tempClass.join(' ')}>{tempStateText}</span>
                     </div>
                 </div>
             </div>

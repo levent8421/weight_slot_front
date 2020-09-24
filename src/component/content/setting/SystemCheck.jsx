@@ -31,7 +31,7 @@ class SystemCheck extends Component {
     }
 
     componentDidMount() {
-        this.props.setTitle('System Check');
+        this.props.setTitle('系统检查');
         this.refreshStatusTable();
     }
 
@@ -54,45 +54,47 @@ class SystemCheck extends Component {
         const {tcpApi} = statusTable;
         return (
             <div className="system-check">
-                <List renderHeader={() => 'TCP API'}>
+                <List renderHeader={() => 'SCADA_API状态'}>
                     <List.Item extra={renderConnectionStatus(tcpApi.connection)}>
-                        TCP API Status
+                        连接状态
                     </List.Item>
                     <List.Item extra={tcpApi.ip}>
-                        IP
+                        IP地址
                     </List.Item>
                     <List.Item extra={tcpApi.port}>
-                        PORT
+                        端口
                     </List.Item>
                     <List.Item arrow="horizontal"
                                onClick={() => this.props.history.push({pathname: '/setting/message-log'})}>
-                        Message Log
-                    </List.Item>
-                    <List.Item arrow="horizontal"
-                               onClick={() => this.props.history.push({pathname: '/setting/sensor-healthy'})}>
-                        Sensor Healthy
+                        交互日志
                     </List.Item>
                     <List.Item>
                         <Flex justify="between">
                             <Flex.Item>
-                                <Button type="warning" onClick={() => this.reconnectTcp()}>Reconnect</Button>
+                                <Button type="warning" onClick={() => this.reconnectTcp()}>重新连接</Button>
                             </Flex.Item>
                             <Flex.Item>
-                                <Button type="primary" onClick={() => this.refreshStatusTable()}>Refresh</Button>
+                                <Button type="primary" onClick={() => this.refreshStatusTable()}>刷新</Button>
                             </Flex.Item>
                         </Flex>
                     </List.Item>
                 </List>
-                <List renderHeader={() => 'Database Tables'}>
+                <List renderHeader={() => '传感器信息'}>
+                    <List.Item arrow="horizontal"
+                               onClick={() => this.props.history.push({pathname: '/setting/sensor-healthy'})}>
+                        传感器健康
+                    </List.Item>
+                </List>
+                <List renderHeader={() => '数据库信息'}>
                     {databaseTables.map(tableName => (<List.Item key={tableName}>{tableName}</List.Item>))}
                     <List.Item>
                         <Flex>
                             <Flex.Item>
-                                <Button type="warning" onClick={() => this.showDbResetConfirm()}>Reset DB</Button>
+                                <Button type="warning" onClick={() => this.showDbResetConfirm()}>重置数据库</Button>
                             </Flex.Item>
                             <Flex.Item>
                                 <Button type="primary" onClick={() => this.refreshDatabaseTables()}>
-                                    Fetch Table List
+                                    数据表
                                 </Button>
                             </Flex.Item>
                         </Flex>
@@ -103,10 +105,10 @@ class SystemCheck extends Component {
     }
 
     reconnectTcp() {
-        Modal.alert('Confirm', 'Disconnect TCP connection and reconnect?', [{text: 'Cancel'}, {
-            text: 'Yes', onPress() {
+        Modal.alert('圈定重连', '确定段考连接并重新建立连接？?', [{text: '取消'}, {
+            text: '确定', onPress() {
                 disconnectTcp().then(() => {
-                    Toast.show('Disconnect success! reconnect after 3 seconds!', 3, false);
+                    Toast.show('断开成功，系统将在3秒后重新连接!', 3, false);
                 });
             }
         }])
@@ -115,7 +117,7 @@ class SystemCheck extends Component {
     showDbResetConfirm() {
         Modal.alert('清空数据库？',
             '该操作将会清空数据库中全部内容，操作完成后需要对货道重新扫描并重新下发库位信息！（该操作无法恢复）',
-            [{text: 'Cancel'}, {text: 'Yes', onPress: () => this.doDbReset()}])
+            [{text: '取消'}, {text: '确定', onPress: () => this.doDbReset()}])
     }
 
     doDbReset() {
