@@ -48,6 +48,27 @@ const slotSortWeight = {
     'D': 2,
     'F': 3,
 };
+
+const compareBySlotNo = (a, b) => {
+    const aName = a.slotNo;
+    const bName = b.slotNo;
+    const aNames = aName.split('-');
+    const bNames = bName.split('-');
+    if (aNames.length !== bNames.length) {
+        return aNames.length - bNames.length;
+    }
+    for (let i = 0; i < aNames.length; i++) {
+        const aItem = parseInt(aNames[i]);
+        const bItem = parseInt(bNames[i]);
+        if (!(aItem && bItem)) {
+            continue;
+        }
+        if (aItem !== bItem) {
+            return aItem - bItem;
+        }
+    }
+    return 0;
+};
 export const groupSlots = slots => {
     const groups = {};
     const putSlot = (name, slot) => {
@@ -72,9 +93,10 @@ export const groupSlots = slots => {
         if (!groups.hasOwnProperty(name)) {
             continue;
         }
+        const slots = groups[name];
         res.push({
             name,
-            slots: groups[name],
+            slots: slots.sort(compareBySlotNo),
         });
     }
     return res.sort((a, b) => {

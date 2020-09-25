@@ -8,10 +8,12 @@ import AppHeader from './component/AppHeader'
 import {HashRouter as Router} from 'react-router-dom'
 import history from './util/History'
 import {fetchEnableTabBarAction} from './store/actionCreators';
+import consoleBanner from './util/consoleBanner';
 
 class App extends React.Component {
     componentDidMount() {
         store.dispatch(fetchEnableTabBarAction());
+        consoleBanner();
     }
 
     render() {

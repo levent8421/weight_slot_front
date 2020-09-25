@@ -30,14 +30,16 @@ class ThSensorDetailsSetting extends Component {
         fetchSensorDataLog(this.sensorId).then(res => {
             const xData = [];
             const tempData = [];
-            const humiData = [];
+            // const humiData = [];
             // const maxHumiData = [];
             // const minHumiData = [];
             const maxTempData = [];
             const minTempData = [];
             for (let log of res) {
                 const {
-                    createTime, temperature, humidity,
+                    createTime,
+                    temperature,
+                    // humidity,
                     // maxHumidity, minHumidity,
                     maxTemperature, minTemperature
                 } = log;
@@ -45,14 +47,15 @@ class ThSensorDetailsSetting extends Component {
                 const timeStr = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
                 xData.push(timeStr);
                 tempData.push(temperature);
-                humiData.push(humidity);
+                // humiData.push(humidity);
                 // maxHumiData.push(maxHumidity);
                 // minHumiData.push(minHumidity);
                 maxTempData.push(maxTemperature);
                 minTempData.push(minTemperature);
             }
             const yData = [
-                {name: '温度', data: tempData}, {name: '湿度', data: humiData},
+                {name: '温度', data: tempData},
+                // {name: '湿度', data: humiData},
                 // maxHumiData, minHumiData,
                 {name: '温度上限', data: maxTempData}, {name: '温度下限', data: minTempData},
             ];
@@ -118,7 +121,7 @@ class ThSensorDetailsSetting extends Component {
                             <Flex>
                                 <Flex.Item>{log.createTime}</Flex.Item>
                                 <Flex.Item>温度:{log.temperature}°C({thSensorStateText(log.temperatureState)})</Flex.Item>
-                                <Flex.Item>湿度:{log.humidity}%({thSensorStateText(log.humidityState)})</Flex.Item>
+                                {/*<Flex.Item>湿度:{log.humidity}%({thSensorStateText(log.humidityState)})</Flex.Item>*/}
                             </Flex>
                         </List.Item>))
                     }
