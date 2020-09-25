@@ -83,7 +83,7 @@ export const groupSlots = slots => {
         if (aWeight !== bWeight) {
             return aWeight - bWeight;
         }
-        return a.localeCompare(b);
+        return a.name.localeCompare(b.name);
     });
 };
 
