@@ -26,7 +26,7 @@ class SettingMenu extends Component {
     render() {
         return (
             <div className="setting">
-                <List renderHeader={() => 'Settings:'}>
+                <List renderHeader={() => '设置'}>
                     <List.Item onClick={() => this.go('/setting/sensor')} arrow="horizontal">
                         重力传感器
                     </List.Item>

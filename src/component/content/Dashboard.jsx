@@ -90,7 +90,7 @@ class Dashboard extends Component {
         const {searchSkuNo} = this.state;
         this.setState({
             searchSkuNo: searchSkuNo + c,
-        })
+        });
     }
 
     componentWillUnmount() {
@@ -210,12 +210,13 @@ class Dashboard extends Component {
                     }
                 </div>
                 <Modal visible={sensorModalVisible}
-                       title={`Sensors for ${operationSlot.slotNo}`}
+                       title={`货道[${operationSlot.slotNo}]传感器`}
                        transparent
                        footer={[
-                           {text: 'OK', onPress: () => this.setState({sensorModalVisible: false})}, {
-                               text: 'DoZero', onPress: () => this.doSlotZero(this.state.operationSlot)
-                           }
+                           {
+                               text: '清零', onPress: () => this.doSlotZero(this.state.operationSlot)
+                           },
+                           {text: '关闭', onPress: () => this.setState({sensorModalVisible: false})},
                        ]}
                        onClose={() => this.setState({sensorModalVisible: false})}>
                     <List renderHeader={() => 'Sensors'}>
@@ -341,10 +342,12 @@ class Dashboard extends Component {
                 noticeSlots: res
             });
             setTimeout(() => this.setState({noticeSlots: [], searchSkuNo: '',}), 5000);
-        }).catch(() => {
+        }).catch(err => {
             this.setState({
                 searchSkuNo: '',
             });
+            const {data} = err;
+            Modal.alert(`无法查询物料:${data.code}`, `无法查询物料号[${skuNo}]!(${data.msg})`);
         });
     }
 
@@ -369,9 +372,9 @@ class Dashboard extends Component {
 
     doSlotZero(slot) {
         const {slotNo} = slot;
-        Modal.alert('Do Zero?', `Do zero for this clot[${slotNo}]?`, [
-            {text: 'Cancel'},
-            {text: 'Yes', onPress: () => this.callDoZero(slotNo)}
+        Modal.alert(`清零${slotNo}?`, `确定清零货道[${slotNo}]?`, [
+            {text: '取消'},
+            {text: '确定', onPress: () => this.callDoZero(slotNo)}
         ])
     }
 

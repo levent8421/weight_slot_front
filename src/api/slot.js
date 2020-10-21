@@ -19,7 +19,7 @@ export const zeroOne = slotNo => {
 
 export const fetchAllSlots = () => {
     return request({
-        url: '/api/slot/',
+        url: '/api/slot/_with-sensors',
         method: 'get',
     });
 };
@@ -74,5 +74,25 @@ export const setCompensationState = state => {
         data: {
             enableCompensation: state,
         }
+    });
+};
+
+export const mergeSlotsByIds = ids => {
+    return request({
+        url: '/api/slot/_merge',
+        method: 'post',
+        data: {
+            slotIds: ids,
+        }
+    });
+};
+
+export const resetSlotBySlots = ids => {
+    return request({
+        url: '/api/slot/_reset-slot-sensors',
+        method: 'post',
+        data: {
+            slotIds: ids,
+        },
     });
 };

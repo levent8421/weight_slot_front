@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
 import {disconnectTcp, fetchDatabaseTables, fetchStatusTable, resetDatabase} from '../../../api/systemStatus';
-import {Button, Flex, List, Modal, Toast} from 'antd-mobile';
+import {Button, Flex, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
 import {connect} from 'react-redux';
 import {setTitle} from '../../../store/actionCreators';
 import {withRouter} from 'react-router-dom';
+import {fetchSoftFilterLevel, updateSoftFilterLevel} from '../../../api/config';
+import {setCompensationState} from '../../../api/slot';
+import {reloadSensors} from '../../../api/sensor';
 
 const mapAction2Props = (dispatch, props) => {
     return {
@@ -19,6 +22,42 @@ const renderConnectionStatus = status => {
     }
 };
 
+const SoftFilterLevelTable = {
+    0: '关闭[0]',
+    1: '低[1]',
+    2: '中[2]',
+    3: '高[3]',
+};
+
+const SoftFilterLevels = [
+    {
+        label: SoftFilterLevelTable[3],
+        value: 3,
+        key: 3,
+    },
+    {
+        label: SoftFilterLevelTable[2],
+        value: 2,
+        key: 2,
+    },
+    {
+        label: SoftFilterLevelTable[1],
+        value: 1,
+        key: 1,
+    },
+    {
+        label: SoftFilterLevelTable[0],
+        value: 0,
+        key: 0,
+    },
+];
+
+const doSetCompensationState = state => {
+    setCompensationState(state).then(() => {
+        Toast.show(`补偿${state ? '开启' : '关闭'}成功！`, 3, false);
+    });
+};
+
 class SystemCheck extends Component {
     constructor(props) {
         super(props);
@@ -26,13 +65,27 @@ class SystemCheck extends Component {
             statusTable: {
                 tcpApi: {},
             },
-            databaseTables: []
+            databaseTables: [],
+            softFilterLevel: -1,
+            softFilterLevelLabel: '',
         };
     }
 
     componentDidMount() {
         this.props.setTitle('系统检查');
         this.refreshStatusTable();
+        this.refreshSoftFilterLevel();
+    }
+
+    refreshSoftFilterLevel() {
+        fetchSoftFilterLevel().then(res => {
+            const {value} = res;
+            const level = parseInt(value);
+            this.setState({
+                softFilterLevelLabel: SoftFilterLevelTable[level],
+                softFilterLevel: level,
+            });
+        });
     }
 
     refreshStatusTable() {
@@ -49,8 +102,23 @@ class SystemCheck extends Component {
         });
     }
 
+    showCompensationOperations() {
+        Modal.operation([
+            {
+                text: '关闭补偿', onPress: () => {
+                    doSetCompensationState(false);
+                }
+            },
+            {
+                text: '开启补偿', onPress: () => {
+                    doSetCompensationState(true);
+                }
+            },
+        ]);
+    }
+
     render() {
-        const {statusTable, databaseTables} = this.state;
+        const {statusTable, databaseTables, softFilterLevel, softFilterLevelLabel} = this.state;
         const {tcpApi} = statusTable;
         return (
             <div className="system-check">
@@ -84,6 +152,23 @@ class SystemCheck extends Component {
                                onClick={() => this.props.history.push({pathname: '/setting/sensor-healthy'})}>
                         传感器健康
                     </List.Item>
+                    <Picker data={SoftFilterLevels}
+                            cols={1}
+                            title="软件滤波等级"
+                            value={softFilterLevel}
+                            onChange={value => {
+                                this.setSoftFilterLevel(value)
+                            }}>
+                        <InputItem value={softFilterLevelLabel}>软滤波等级</InputItem>
+                    </Picker>
+                    <List.Item extra="Disable/Enable"
+                               onClick={() => this.showCompensationOperations()}>
+                        补偿管理
+                    </List.Item>
+                    <List.Item extra="强制刷新货道数据"
+                               onClick={() => this.showReloadConfirm()}>
+                        重新加载
+                    </List.Item>
                 </List>
                 <List renderHeader={() => '数据库信息'}>
                     {databaseTables.map(tableName => (<List.Item key={tableName}>{tableName}</List.Item>))}
@@ -93,15 +178,34 @@ class SystemCheck extends Component {
                                 <Button type="warning" onClick={() => this.showDbResetConfirm()}>重置数据库</Button>
                             </Flex.Item>
                             <Flex.Item>
-                                <Button type="primary" onClick={() => this.refreshDatabaseTables()}>
-                                    数据表
-                                </Button>
+                                <Button type="primary"
+                                        onClick={() => this.refreshDatabaseTables()}>数据表</Button>
                             </Flex.Item>
                         </Flex>
                     </List.Item>
                 </List>
             </div>
         );
+    }
+
+    showReloadConfirm() {
+        Modal.alert('重新加载', '确认重新加载货道数据?', [
+            {text: '取消'},
+            {
+                text: '确认', onPress: () => {
+                    reloadSensors().then(() => {
+                        Toast.show('重新加载成功', 3, false);
+                    });
+                }
+            },
+        ]);
+    }
+
+    setSoftFilterLevel(value) {
+        updateSoftFilterLevel(value[0]).then(() => {
+            Toast.show('滤波等级设置成功，重新加载后生效！', 3, false);
+            this.refreshSoftFilterLevel();
+        });
     }
 
     reconnectTcp() {

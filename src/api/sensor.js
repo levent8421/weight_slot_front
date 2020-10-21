@@ -59,3 +59,15 @@ export const findSensorById = id => {
         method: 'get',
     });
 };
+export const tryRecoverySensorAddress = id => {
+    return request({
+        url: `/api/sensor/${id}/_recovery-sensor-address`,
+        method: 'post',
+    });
+};
+export const tryRecoveryElabelAddress = id => {
+    return request({
+        url: `/api/sensor/${id}/_recovery-elabel-address`,
+        method: 'post',
+    });
+};

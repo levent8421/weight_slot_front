@@ -2,11 +2,17 @@ import React, {Component} from 'react';
 import FloatButton from '../../commons/FloatButton';
 import {ActionSheet, Card, Flex, List, Modal, Progress, Toast} from 'antd-mobile';
 import {cleanCounter, sensorHealthy} from '../../../api/healthy';
-import {abortFirmwareUpgrade, fetchUpgradeProgress, sensorFirmwareUpgrade} from '../../../api/firmware';
+import {tryRecoveryElabelAddress, tryRecoverySensorAddress} from '../../../api/sensor';
+import {
+    abortFirmwareUpgrade,
+    eLabelFirmwareUpgrade,
+    fetchUpgradeProgress,
+    sensorFirmwareUpgrade
+} from '../../../api/firmware';
 import './SensorHealthy.sass';
 
-const operations = ['Clean', 'Refresh', 'Cancel'];
-const ClickOperations = ['Firmware Upgrade', 'Cancel'];
+const operations = ['重置计数器', '刷新', '取消'];
+const ClickOperations = ['传感器固件升级', '电子标签固件升级', '恢复传感器地址', '恢复电子标签地址', '取消'];
 const WARN_RATE = 0.1;
 const UPGRADE_PROGRESS_STATE_TABLE = {
     0: '等待升级',
@@ -41,10 +47,11 @@ class SensorHealthy extends Component {
 
     refreshSensors() {
         sensorHealthy().then(res => {
+            const healthyList = res.sort((a, b) => a.sensor.address - b.sensor.address);
             this.setState({
-                sensors: res,
+                sensors: healthyList,
                 showUpgradeProgress: false,
-            })
+            });
         });
     }
 
@@ -99,15 +106,59 @@ class SensorHealthy extends Component {
         );
     }
 
+    recoveryElabelAddress(healthy) {
+        const {sensor} = healthy;
+        const {id, elabelSn} = sensor;
+        const content = (<p>确认使用序列号[{elabelSn}]恢复地址?</p>);
+        Modal.alert(`电子标签[${sensor.address}]地址恢复`, content, [
+            {
+                text: '确认', onPress: () => {
+                    tryRecoveryElabelAddress(id).then(res => {
+                        Toast.show(`${res.address}:恢复成功`, 3, false);
+                    });
+                }
+            },
+            {text: '取消'},
+        ]);
+    }
+
+    recoverySensorAddress(healthy) {
+        const {sensor} = healthy;
+        const {id, deviceSn, sensorSn} = sensor;
+        const content = (<p>OriginSN:[{deviceSn}]<br/>LastSN:[{sensorSn}]<br/>确认使用该SN恢复地址?</p>);
+        Modal.alert(`传感器[${sensor.address}]地址恢复`, content, [
+            {
+                text: '确认', onPress: () => {
+                    tryRecoverySensorAddress(id).then(res => {
+                        Toast.show(`${res.address}:恢复成功`, 3, false);
+                    });
+                }
+            },
+            {text: '取消'},
+        ]);
+    }
+
     onCardClick(healthy) {
         ActionSheet.showActionSheetWithOptions({
             options: ClickOperations,
-            title: 'Sensor Operations',
+            title: '操作菜单',
             cancelButtonIndex: ClickOperations.length - 1,
-            destructiveButtonIndex: 0,
         }, index => {
-            if (index === 0) {
-                this.upgradeFirmware(healthy);
+            switch (index) {
+                case 0:
+                    this.upgradeFirmware(healthy);
+                    break;
+                case 1:
+                    this.upgradeElabelFirmware(healthy);
+                    break;
+                case 2:
+                    this.recoverySensorAddress(healthy);
+                    break;
+                case 3:
+                    this.recoveryElabelAddress(healthy);
+                    break;
+                default:
+                // Do Nothing
             }
         });
     }
@@ -140,12 +191,53 @@ class SensorHealthy extends Component {
             {
                 text: '取消升级',
             }
+        ]);
+    }
+
+    upgradeElabelFirmware(healthy) {
+        const {sensor, packageCounter} = healthy;
+        const total = packageCounter.elabelSuccess + packageCounter.elabelErrors;
+        const errorsRate = total === 0 ? 0 : ((packageCounter.elabelErrors / total));
+        let title = '';
+        let content = '';
+        let warn = false;
+        const errorRateInPer = (errorsRate * 100).toFixed(2);
+        if (errorsRate > WARN_RATE) {
+            const minRate = (WARN_RATE * 100).toFixed(2);
+            title = '谨慎升级！！！';
+            content = `电子标签器${sensor.address}的网络丢包率为${errorRateInPer}%，在极限值${minRate}%下，建议通过串口升级！`;
+            warn = true;
+        } else {
+            title = '升级确认';
+            content = `电子标签${sensor.address}器的网络丢包率为${errorRateInPer}%,升级后请手动reload启动重力服务！`;
+            warn = false;
+        }
+        Modal.alert(title, content, [
+            {
+                text: warn ? '仍要升级' : '升级',
+                onPress: () => {
+                    this.doElabelFirmwareUpgrade(sensor);
+                }
+            },
+            {
+                text: '取消升级',
+            }
         ])
     }
 
     doFirmwareUpgrade(sensor) {
         this.tryReleaseUpgradeProgressTimmer();
         sensorFirmwareUpgrade(sensor.id).then(() => {
+            Toast.show('升级已完成', 2, false);
+            this.tryReleaseUpgradeProgressTimmer();
+        });
+        this.showUpgradeProgress();
+        this.refreshUpgradeProgress(this.refreshUpgradeProgressCb());
+    }
+
+    doElabelFirmwareUpgrade(sensor) {
+        this.tryReleaseUpgradeProgressTimmer();
+        eLabelFirmwareUpgrade(sensor.id).then(() => {
             Toast.show('升级已完成', 2, false);
             this.tryReleaseUpgradeProgressTimmer();
         });

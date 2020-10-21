@@ -17,3 +17,20 @@ export const setEnableTabBar = enable => {
         },
     });
 };
+
+export const fetchSoftFilterLevel = () => {
+    return request({
+        url: '/api/config/weight.soft_filter_level',
+        method: 'get',
+    });
+};
+
+export const updateSoftFilterLevel = value => {
+    return request({
+        url: '/api/config/weight.soft_filter_level',
+        method: 'post',
+        data: {
+            value: value,
+        }
+    });
+};

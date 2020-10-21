@@ -22,9 +22,9 @@ const mapState2Props = (state, props) => {
 };
 
 class SensorSetting extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
+    componentDidMount() {
+        this.props.setTitle('重力传感器设置');
+        this.props.fetchSensors();
         this.props.setTabBarState(false);
     }
 
@@ -32,6 +32,14 @@ class SensorSetting extends Component {
         const {sensors} = this.props;
         return (
             <div className="slotSetting">
+                <Card>
+                    <Card.Header title="传感器信息" extra="WeightSensor"/>
+                    <Card.Body>
+                        <List>
+                            <List.Item extra={sensors.length}>传感器数量</List.Item>
+                        </List>
+                    </Card.Body>
+                </Card>
                 <List renderHeader={() => '传感器列表'}>
                     {
                         sensors.map(sensor => (<List.Item key={sensor.id}>
@@ -64,10 +72,6 @@ class SensorSetting extends Component {
         this.props.history.push({pathname: `/setting/${sensor.address}/sensor-details`});
     }
 
-    componentDidMount() {
-        this.props.setTitle('重力传感器设置');
-        this.props.fetchSensors();
-    }
 
     toggleElabel(sensor, e) {
         const sensorId = sensor.id;

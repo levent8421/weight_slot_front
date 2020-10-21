@@ -8,6 +8,14 @@ export const sensorFirmwareUpgrade = sensorId => {
     });
 };
 
+export const eLabelFirmwareUpgrade = sensorId => {
+    return request({
+        url: `/api/firmware/${sensorId}/_elabel-upgrade`,
+        method: 'post',
+        hideLoading: true,
+    });
+};
+
 export const fetchUpgradeProgress = () => {
     return request({
         url: '/api/firmware/_upgrade-progress',

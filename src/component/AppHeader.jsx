@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import {ActionSheet, Icon, Modal, NavBar, Popover, Toast} from "antd-mobile";
+import {Icon, Modal, NavBar, Popover, Toast} from "antd-mobile";
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom'
 import './AppHeader.sass';
 import {reloadSensors} from "../api/sensor";
-import {doZeroAll, setCompensationState} from '../api/slot';
 
 const mapState2Props = (state, props) => {
     return {
@@ -13,7 +12,6 @@ const mapState2Props = (state, props) => {
         showHeader: state.showHeader,
     };
 };
-const CompensationActions = ['Enable', 'Disable', 'Cancel'];
 
 class AppHeader extends Component {
     constructor(props) {
@@ -51,10 +49,6 @@ class AppHeader extends Component {
                                     style={{whiteSpace: 'nowrap'}}>货道设置</Item>),
                              (<Item key="reload" value="reload"
                                     style={{whiteSpace: 'nowrap'}}>重新加载</Item>),
-                             (<Item key="doZero" value="reload"
-                                    style={{whiteSpace: 'nowrap'}}>全部清零</Item>),
-                             (<Item key="compensation" value="compensation"
-                                    style={{whiteSpace: 'nowrap'}}>补偿管理</Item>),
                          ]}
                          onSelect={e => this.onPopoverSelect(e)}
         >
@@ -81,55 +75,11 @@ class AppHeader extends Component {
             case 'reload':
                 this.doReloadSensors();
                 break;
-            case 'doZero':
-                this.showZeroAllConfirm();
-                break;
-            case 'compensation':
-                this.showCompensationOperations();
-                break;
             default:
                 break;
         }
         this.setState({
             popoverVisible: false
-        });
-    }
-
-    showZeroAllConfirm() {
-        Modal.alert('Zero All', 'Do zero for all sensors?', [{text: 'Cancel'}, {
-            text: 'Yes', onPress() {
-                doZeroAll().then(() => {
-                    Toast.show('Zero all success!', 1, false);
-                });
-            }
-        }])
-    }
-
-    showCompensationOperations() {
-        ActionSheet.showActionSheetWithOptions({
-            options: CompensationActions,
-            title: 'Compensation operations',
-            cancelButtonIndex: CompensationActions.length - 1,
-            destructiveButtonIndex: 1,
-        }, index => {
-            const name = CompensationActions[index];
-            switch (name) {
-                case 'Enable':
-                    this.doSetCompensationState(true);
-                    break;
-                case 'Disable':
-                    this.doSetCompensationState(false);
-                    break;
-                default:
-                    break
-            }
-        });
-    }
-
-    doSetCompensationState(state) {
-        setCompensationState(state).then(() => {
-            const message = (state ? 'Enable' : 'Disable') + ' Compensation Success!';
-            Toast.show(message, 1, false);
         });
     }
 
