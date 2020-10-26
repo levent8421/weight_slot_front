@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {setTitle} from '../../store/actionCreators';
-import {Carousel, NoticeBar, WhiteSpace, WingBlank} from 'antd-mobile';
+import {Carousel, List, WhiteSpace, WingBlank} from 'antd-mobile';
 import './About.sass';
 
 const mapAction2Props = (dispatch, props) => {
@@ -26,7 +26,6 @@ class About extends Component {
     render() {
         return (
             <div className="about">
-                <NoticeBar marqueeProps={{loop: true,}}>磐石电气（常州）有限公司：http://www.monolith-iot.com</NoticeBar>
                 <WhiteSpace/>
                 <WingBlank>
                     <Carousel
@@ -61,6 +60,13 @@ class About extends Component {
                         </p>
                     </div>
                 </WingBlank>
+                <List renderHeader="TestEntries">
+                    <List.Item arrow="horizontal" onClick={() => {
+                        this.props.history.push({pathname: '/pid'})
+                    }}>
+                        PID Animation
+                    </List.Item>
+                </List>
             </div>
         );
     }

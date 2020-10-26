@@ -380,7 +380,7 @@ class Dashboard extends Component {
 
     callDoZero(slotNo) {
         zeroOne(slotNo).then(() => {
-            Toast.show(`slot[${slotNo}] Zero success!`);
+            Toast.show(`slot[${slotNo}] Zero success!`, 3, false);
         });
     }
 }

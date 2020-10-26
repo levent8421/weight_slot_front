@@ -16,6 +16,28 @@ const mapAction2Props = (dispatch, props) => {
         setTitle: (...args) => dispatch(setTitle(...args)),
     }
 };
+const isContinueSelected = slots => {
+    const selectedMap = {};
+    let selectedMinAddress = 999999;
+    for (let slot of slots) {
+        if (slot.selected) {
+            selectedMap[slot.address] = slot;
+            if (slot.address < selectedMinAddress) {
+                selectedMinAddress = slot.address;
+            }
+        }
+    }
+    delete selectedMap[selectedMinAddress];
+    while (Object.keys(selectedMap).length > 0) {
+        selectedMinAddress++;
+        const nextSelected = selectedMap[selectedMinAddress];
+        if (!nextSelected) {
+            return false;
+        }
+        delete selectedMap[selectedMinAddress];
+    }
+    return true;
+};
 
 class SlotSetting extends Component {
     constructor(props) {
@@ -23,6 +45,7 @@ class SlotSetting extends Component {
         this.state = {
             slots: [],
             selectedNums: 0,
+            continueSelected: true,
         };
     }
 
@@ -40,9 +63,11 @@ class SlotSetting extends Component {
             }
         }
         const selectedNums = slots.filter(slot => slot.selected).length;
+        const continueSelected = isContinueSelected(slots);
         this.setState({
             slots: slots,
             selectedNums: selectedNums,
+            continueSelected: continueSelected,
         });
     }
 
@@ -76,17 +101,24 @@ class SlotSetting extends Component {
     }
 
     render() {
-        const {slots, selectedNums} = this.state;
+        const {slots, selectedNums, continueSelected} = this.state;
         const _this = this;
+        const selectedNumStyle = continueSelected ? 'continue' : 'warn';
         return (
             <div className="slot-setting">
-                <div className="fixed-tips"><p>已选择：{selectedNums}个</p></div>
                 <List renderHeader={() => '重力货道列表'} className="slots">
                     {
                         slots.map(slot => _this.renderSlotItem(slot))
                     }
                 </List>
                 <FloatButton iconType="ellipsis" onClick={() => this.showOperationSheet()}/>
+                <div className="fixed-tips">
+                    <p>已选择：
+                        <span className={selectedNumStyle}>{selectedNums}</span>
+                        个
+                        <span className={selectedNumStyle}>{continueSelected ? '连续选择' : '未连续选择'}</span>
+                    </p>
+                </div>
             </div>
         );
     }
@@ -103,6 +135,11 @@ class SlotSetting extends Component {
             return;
         }
         const slotNos = slots.map(slot => slot.slotNo).join(',');
+        const {continueSelected} = this.state;
+        if (!continueSelected) {
+            Modal.alert('无法合并不连续货道', '合并货道时需选择地址连续的货道！', [{text: '知道了'}]);
+            return;
+        }
         Modal.alert('合并货道', `确认合并:${slotNos}?`, [
             {
                 text: '取消',
@@ -202,7 +239,7 @@ class SlotSetting extends Component {
     doZeroAll() {
         doZeroAll().then(() => {
             Toast.show('全部货道已经被清零!');
-        })
+        });
     }
 
     fetchSlots() {

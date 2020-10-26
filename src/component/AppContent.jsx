@@ -5,6 +5,7 @@ import Setting from './content/Setting';
 import Address from './content/Address';
 import Logs from './content/Logs';
 import About from './content/About';
+import PidAnimation from './content/PidAnimation';
 import './AppContent.sass';
 import {connect} from 'react-redux';
 
@@ -33,6 +34,7 @@ class AppContent extends Component {
                     <Route path="/address" component={Address} exact/>
                     <Route path="/logs" component={Logs} exact/>
                     <Route path="/about" component={About} exact/>
+                    <Route path="/pid" component={PidAnimation} exact/>
                 </Switch>
                 <div className="tabBarMask"/>
             </div>

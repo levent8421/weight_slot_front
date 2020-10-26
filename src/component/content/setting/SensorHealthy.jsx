@@ -2,7 +2,11 @@ import React, {Component} from 'react';
 import FloatButton from '../../commons/FloatButton';
 import {ActionSheet, Card, Flex, List, Modal, Progress, Toast} from 'antd-mobile';
 import {cleanCounter, sensorHealthy} from '../../../api/healthy';
-import {tryRecoveryElabelAddress, tryRecoverySensorAddress} from '../../../api/sensor';
+import {
+    tryRecoveryElabelAddress,
+    tryRecoverySensorAddress,
+    tryRecoverySensorAddressWithOriginSn
+} from '../../../api/sensor';
 import {
     abortFirmwareUpgrade,
     eLabelFirmwareUpgrade,
@@ -125,11 +129,18 @@ class SensorHealthy extends Component {
     recoverySensorAddress(healthy) {
         const {sensor} = healthy;
         const {id, deviceSn, sensorSn} = sensor;
-        const content = (<p>OriginSN:[{deviceSn}]<br/>LastSN:[{sensorSn}]<br/>确认使用该SN恢复地址?</p>);
+        const content = (<p>初始SN:[{deviceSn}]<br/>备份SN:[{sensorSn}]<br/>确认使用该SN恢复地址?</p>);
         Modal.alert(`传感器[${sensor.address}]地址恢复`, content, [
             {
-                text: '确认', onPress: () => {
+                text: '使用新SN恢复', onPress: () => {
                     tryRecoverySensorAddress(id).then(res => {
+                        Toast.show(`${res.address}:恢复成功`, 3, false);
+                    });
+                }
+            },
+            {
+                text: '使用原SN恢复', onPress: () => {
+                    tryRecoverySensorAddressWithOriginSn(id).then(res => {
                         Toast.show(`${res.address}:恢复成功`, 3, false);
                     });
                 }

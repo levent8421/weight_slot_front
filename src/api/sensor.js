@@ -65,9 +65,21 @@ export const tryRecoverySensorAddress = id => {
         method: 'post',
     });
 };
+export const tryRecoverySensorAddressWithOriginSn = id => {
+    return request({
+        url: `/api/sensor/${id}/_recovery-sensor-address-with-origin-sn`,
+        method: 'post',
+    });
+};
 export const tryRecoveryElabelAddress = id => {
     return request({
         url: `/api/sensor/${id}/_recovery-elabel-address`,
+        method: 'post',
+    });
+};
+export const cleanAllBackupSn = () => {
+    return request({
+        url: '/api/sensor/_clean-backup-sn',
         method: 'post',
     });
 };

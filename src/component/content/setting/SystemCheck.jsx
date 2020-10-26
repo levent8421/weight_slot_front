@@ -6,7 +6,7 @@ import {setTitle} from '../../../store/actionCreators';
 import {withRouter} from 'react-router-dom';
 import {fetchSoftFilterLevel, updateSoftFilterLevel} from '../../../api/config';
 import {setCompensationState} from '../../../api/slot';
-import {reloadSensors} from '../../../api/sensor';
+import {cleanAllBackupSn, reloadSensors} from '../../../api/sensor';
 
 const mapAction2Props = (dispatch, props) => {
     return {
@@ -169,6 +169,10 @@ class SystemCheck extends Component {
                                onClick={() => this.showReloadConfirm()}>
                         重新加载
                     </List.Item>
+                    <List.Item extra="清除备份SN并重新收集"
+                               onClick={() => this.showCleanBackupSnConfirm()}>
+                        重新收集SN
+                    </List.Item>
                 </List>
                 <List renderHeader={() => '数据库信息'}>
                     {databaseTables.map(tableName => (<List.Item key={tableName}>{tableName}</List.Item>))}
@@ -186,6 +190,19 @@ class SystemCheck extends Component {
                 </List>
             </div>
         );
+    }
+
+    showCleanBackupSnConfirm() {
+        Modal.alert('重新收集SN', '确认清空备份SN并重新收集？', [
+            {text: '取消'},
+            {
+                text: '确认', onPress: () => {
+                    cleanAllBackupSn().then(res => {
+                        Toast.show('备份SN清空成功，操作记录数为：' + res, 3, false);
+                    });
+                }
+            },
+        ]);
     }
 
     showReloadConfirm() {
@@ -209,7 +226,7 @@ class SystemCheck extends Component {
     }
 
     reconnectTcp() {
-        Modal.alert('圈定重连', '确定段考连接并重新建立连接？?', [{text: '取消'}, {
+        Modal.alert('确定重连', '确定段考连接并重新建立连接？?', [{text: '取消'}, {
             text: '确定', onPress() {
                 disconnectTcp().then(() => {
                     Toast.show('断开成功，系统将在3秒后重新连接!', 3, false);

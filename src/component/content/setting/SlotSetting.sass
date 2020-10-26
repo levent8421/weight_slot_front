@@ -1,16 +1,33 @@
 .slot-setting
   .fixed-tips
-    position: fixed
     width: 100%
-    padding: 0 20px
-    top: 45px
-    left: 0
-    z-index: 99999999
+    height: 45px
     background-color: white
     border-top: 1px solid #666
+    position: fixed
+    left: 0
+    top: 45px
+
+    p
+      margin: 0
+      padding: 0 0 0 20px
+      height: 100%
+      line-height: 45px
+      font-size: 1.2rem
+      font-weight: bold
+
+      span
+        padding: 0 10px
+
+      span.continue
+        color: #0e80d2
+
+      span.warn
+        color: #FF9808
 
   .slots
-    margin-top: 35px
+    margin: 45px 0 0 0
+    padding: 0
 
   .slot-item
     display: flex
