@@ -34,3 +34,21 @@ export const updateSoftFilterLevel = value => {
         }
     });
 };
+
+export const fetchExtraPageUri = () => {
+    return request({
+        url: '/api/config/extra.page_uri',
+        method: 'get',
+    });
+};
+
+export const setExtraPageUri = uri => {
+    return request({
+        url: '/api/config/extra.page_uri',
+        method: 'post',
+        data: {
+            value: uri,
+            createIfNotExists: true,
+        }
+    });
+};

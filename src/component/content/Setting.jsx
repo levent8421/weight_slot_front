@@ -15,6 +15,7 @@ import SensorHealthy from './setting/SensorHealthy'
 import SensorDetails from './setting/SensorDetails'
 import ThSensorSetting from './setting/ThSensorSetting'
 import ThSensorDetailsSetting from './setting/ThSensorDetailsSetting'
+// import ExtraPageSetting from './setting/ExtraPageSetting'
 import {connect} from 'react-redux';
 
 const mapAction2Props = (dispatch, props) => {
@@ -48,6 +49,7 @@ class Setting extends Component {
                     <Route path="/setting/th-sensor" component={ThSensorSetting} exact/>
                     <Route path="/setting/:address/sensor-details" component={SensorDetails} exact/>
                     <Route path="/setting/:id/th-detail" component={ThSensorDetailsSetting} exact/>
+                    {/*<Route path="/setting/extra-setting" component={ExtraPageSetting} exact/>*/}
                 </Switch>
             </Router>
         )

@@ -18,6 +18,7 @@ import {
 import {highlightBySku, zeroOne} from '../../api/slot';
 import {withRouter} from 'react-router-dom';
 import {fetchDashboardData} from "../../api/dashboard";
+import {parseDate} from '../../util/datetimeUtils';
 
 const mapState2Props = (state, props) => {
     return {
@@ -45,6 +46,18 @@ const TabItems = [
         key: 'settings',
     }
 ];
+const findLastNoticeSlot = slots => {
+    let lastTime = 0;
+    let res = null;
+    for (let slot of slots) {
+        const ts = parseDate(slot.updateTime);
+        if (ts > lastTime) {
+            lastTime = ts;
+            res = slot;
+        }
+    }
+    return res;
+};
 
 class Dashboard extends Component {
     constructor(props) {
@@ -59,6 +72,7 @@ class Dashboard extends Component {
             operationSlot: {},
             searchSkuNo: '',
             noticeSlots: [],
+            lastNoticeSlot: null,
         };
         this.props.setTitle('Dashboard');
         this.renderSlotCard = this.renderSlotCard.bind(this);
@@ -181,12 +195,11 @@ class Dashboard extends Component {
     }
 
     render() {
-        const {searchSkuNo, noticeSlots, sensorModalVisible, operationSlot, sensors, groupedSlots} = this.state;
+        const {lastNoticeSlot, searchSkuNo, noticeSlots, sensorModalVisible, operationSlot, sensors, groupedSlots} = this.state;
         this.highlightSlotIds = {};
         for (let slot of noticeSlots) {
             this.highlightSlotIds[slot.id] = true;
         }
-        const firstNoticeSlot = noticeSlots ? noticeSlots[0] : null;
         return (
             <div className="dashboard">
                 <Tabs tabs={TabItems} onChange={(tab, index) => this.onTabChange(tab, index)}/>
@@ -196,7 +209,7 @@ class Dashboard extends Component {
                     onChange={searchSkuNo => this.setState({searchSkuNo})}/>
                 <div className="notice-list">
                     {
-                        this.renderNoticeBar(firstNoticeSlot)
+                        this.renderNoticeBar(lastNoticeSlot)
                     }
                 </div>
                 <div className="slot-groups">
@@ -244,13 +257,13 @@ class Dashboard extends Component {
             return;
         }
         const content = [];
-        content.push(slot.skuName);
+        content.push(<span key={0}>{slot.skuName}</span>);
         if (slot.skuShelfLifeOpenDays) {
-            content.push('，开封后保质期');
-            content.push((<span className="days">{slot.skuShelfLifeOpenDays}</span>));
-            content.push('天');
+            content.push(<span key={1}>，开封后保质期</span>);
+            content.push((<span key={2} className="days">{slot.skuShelfLifeOpenDays}</span>));
+            content.push(<span key={3}>天</span>);
         } else {
-            content.push('，开封后保质期未设置！');
+            content.push(<span key={1}>，开封后保质期未设置！</span>);
         }
         return (<NoticeBar className="notice">
             {content}
@@ -338,10 +351,12 @@ class Dashboard extends Component {
             return;
         }
         highlightBySku(skuNo).then(res => {
+            const lastNoticeSlot = findLastNoticeSlot(res);
             this.setState({
-                noticeSlots: res
+                noticeSlots: res,
+                lastNoticeSlot: lastNoticeSlot,
             });
-            setTimeout(() => this.setState({noticeSlots: [], searchSkuNo: '',}), 5000);
+            setTimeout(() => this.setState({noticeSlots: [], searchSkuNo: '', lastNoticeSlot: null}), 5000);
         }).catch(err => {
             this.setState({
                 searchSkuNo: '',

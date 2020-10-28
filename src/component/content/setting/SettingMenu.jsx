@@ -48,6 +48,9 @@ class SettingMenu extends Component {
                     <List.Item onClick={() => this.go('/setting/overview')} arrow="horizontal">
                         货道概览信息
                     </List.Item>
+                    <List.Item onClick={() => this.go('/setting/extra-setting')} arrow="horizontal">
+                        扩展页面设置
+                    </List.Item>
                 </List>
             </div>
         );

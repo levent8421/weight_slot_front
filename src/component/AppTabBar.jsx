@@ -3,6 +3,7 @@ import {TabBar} from 'antd-mobile'
 import {connect} from 'react-redux';
 import './AppTabBar.sass'
 import {withRouter} from 'react-router-dom';
+import {CodeSandboxCircleFilled as ExtraIcon} from '@ant-design/icons';
 
 const mapStateToProps = (state, props) => {
     return {
@@ -37,6 +38,11 @@ class AppTabBar extends React.Component {
                                      icon={<i className="iconfont buttonIcon">&#xe64e;</i>}
                                      selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe64e;</i>}
                                      onPress={() => this.pushPath('/')}/>
+                        <TabBar.Item title="扩展"
+                                     selected={path === '/extra'}
+                                     icon={<ExtraIcon className="buttonIcon"/>}
+                                     selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe60c;</i>}
+                                     onPress={() => this.pushPath('/extra')}/>
                         <TabBar.Item title="日志"
                                      selected={path === '/logs'}
                                      icon={<i className="iconfont buttonIcon">&#xe60c;</i>}
