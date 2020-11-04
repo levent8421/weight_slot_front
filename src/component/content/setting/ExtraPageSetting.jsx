@@ -27,11 +27,13 @@ class ExtraPageSetting extends Component {
             });
         }).catch(err => {
             const data = err.data;
-            const {code} = data;
-            if (code === 404) {
-                this.setState({
-                    pageUri: '页面路径未设置',
-                })
+            if (data) {
+                const {code} = data;
+                if (code === 404) {
+                    this.setState({
+                        pageUri: '页面路径未设置',
+                    })
+                }
             }
         });
     }

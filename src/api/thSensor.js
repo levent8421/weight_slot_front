@@ -21,3 +21,13 @@ export const setRange = data => {
         data
     });
 };
+
+export const calibrateTemp = (id, temp) => {
+    return request({
+        url: `/api/th-sensor/${id}/_calibrate-temperature`,
+        method: 'post',
+        data: {
+            currentTemperature: temp,
+        },
+    });
+};

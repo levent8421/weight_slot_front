@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {fetchOneSensor, setRange} from '../../../api/thSensor';
+import {calibrateTemp, fetchOneSensor, setRange} from '../../../api/thSensor';
 import {reloadSensors} from '../../../api/sensor';
 import {connect} from 'react-redux';
 import {setTitle} from '../../../store/actionCreators';
@@ -23,6 +23,7 @@ class ThSensorDetailsSetting extends Component {
             dataLogs: [],
             chartsXData: [],
             chartsYData: [],
+            currentTemp: '0',
         };
     }
 
@@ -90,8 +91,31 @@ class ThSensorDetailsSetting extends Component {
         });
     }
 
+    calibrateTemp() {
+        const {currentTemp} = this.state;
+        const {id} = this.props.match.params;
+        if (!currentTemp.match(/^-?\d+\.?\d*$/)) {
+            Toast.show('请输入正确的温度值', 3, false);
+            return;
+        }
+        Modal.alert('确定标定？', '确定校准该温度传感器？', [
+                {
+                    text: '取消',
+                },
+                {
+                    text: '确定',
+                    onPress() {
+                        calibrateTemp(id, currentTemp).then(res => {
+                            Toast.show('标定成功', 3, false);
+                        });
+                    }
+                }
+            ]
+        );
+    }
+
     render() {
-        const {sensor, dataLogs, chartsXData, chartsYData} = this.state;
+        const {sensor, dataLogs, chartsXData, chartsYData, currentTemp} = this.state;
         return (
             <div className="th-sensor-detail">
                 <List renderHeader={() => '报警范围'}>
@@ -107,6 +131,19 @@ class ThSensorDetailsSetting extends Component {
                         <Button type="primary" onClick={() => this.updateRange()}>保存</Button>
                     </List.Item>
                 </List>
+                <Card>
+                    <Card.Header
+                        title="温度标定"/>
+                    <Card.Body>
+                        <List>
+                            <InputItem value={currentTemp}
+                                       onChange={txt => this.setState({currentTemp: txt})}>当前温度：</InputItem>
+                            <List.Item>
+                                <Button type="primary" onClick={() => this.calibrateTemp()}>标定</Button>
+                            </List.Item>
+                        </List>
+                    </Card.Body>
+                </Card>
                 <Card>
                     <Card.Header title="历史数据"/>
                     <Card.Body>
