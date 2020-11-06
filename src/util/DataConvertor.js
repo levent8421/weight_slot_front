@@ -1,3 +1,5 @@
+import {parseDate} from './datetimeUtils';
+
 export const asKg = g => {
     return (g / 1000.0).toFixed(3);
 };
@@ -150,4 +152,29 @@ export const thSensorStateText = state => {
 
 export const thSensorStateWarn = state => {
     return state !== 1;
+};
+
+export const lastHighlightSlot = slots => {
+    if (!slots) {
+        return null;
+    }
+    let lastTime = -1;
+    let lastSlot = null;
+    for (let slot of slots) {
+        if (!slot.skuUpdateTime) {
+            continue;
+        }
+        const skuUpdateTime = parseDate(slot.skuUpdateTime);
+        if (skuUpdateTime && skuUpdateTime.hasOwnProperty('getTime')) {
+            const time = skuUpdateTime.getTime();
+            if (time - lastTime > 0) {
+                lastTime = time;
+                lastSlot = slot;
+            }
+        }
+    }
+    if (!lastSlot) {
+        lastSlot = slots[0];
+    }
+    return lastSlot;
 };

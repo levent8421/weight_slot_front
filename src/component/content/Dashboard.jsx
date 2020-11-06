@@ -50,7 +50,7 @@ const findLastNoticeSlot = slots => {
     let lastTime = 0;
     let res = null;
     for (let slot of slots) {
-        const ts = parseDate(slot.updateTime);
+        let ts = slot.skuUpdateTime ? parseDate(slot.skuUpdateTime) : 0;
         if (ts > lastTime) {
             lastTime = ts;
             res = slot;
@@ -155,27 +155,34 @@ class Dashboard extends Component {
         const tempWarn = thSensorStateWarn(data.temperatureState);
         const humidityText = humidity && humidity.toFixed(1);
         const tempClass = ['value'];
+        const stateClass = ['dot'];
+        const cardClass = ['th-card'];
         if (tempWarn) {
+            stateClass.push('warn');
             tempClass.push('warn');
+            cardClass.push('warn');
         } else {
             tempClass.push('ok');
         }
-
-        return (<div className="th-card" key={sensor.id}>
+        const stateStr = asStateString(sensor.state);
+        const tempClassStr = tempClass.join(' ');
+        return (<div className={cardClass.join(' ')} key={sensor.id}>
             <div className="card-header">
                 <div className="no">{sensor.no}</div>
-                <div className="state"><span>{humidityText}%</span><span className="dot"/>使用中</div>
+                <div className="state"><span>{humidityText}%</span><span className={stateClass.join(' ')}/>
+                    {stateStr}
+                </div>
             </div>
             <div className="card-body">
                 <div className="inner">
                     <div className="item">
                         <span className="name">温度:</span>
-                        <span className={tempClass.join(' ')}>{temperature}°C</span>
+                        <span className={tempClassStr}>{temperature}°C</span>
                     </div>
                     <div className="delimiter"/>
                     <div className="item">
                         <span className="name">状态</span>
-                        <span className={tempClass.join(' ')}>{tempStateText}</span>
+                        <span className={tempClassStr}>{tempStateText}</span>
                     </div>
                 </div>
             </div>

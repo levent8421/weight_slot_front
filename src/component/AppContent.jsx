@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Route, Switch} from 'react-router-dom';
 import Dashboard from './content/Dashboard'
+import HomeDashboard from './content/HomeDashboard'
 import Setting from './content/Setting';
 import Address from './content/Address';
 import Logs from './content/Logs';
@@ -30,7 +31,8 @@ class AppContent extends Component {
                     this.props.showHeader ? <div className="headerMask"/> : null
                 }
                 <Switch>
-                    <Route path="/" component={Dashboard} exact/>
+                    <Route path="/dashboard" component={Dashboard} exact/>
+                    <Route path="/" component={HomeDashboard} exact/>
                     <Route path="/setting**" component={Setting} exact/>
                     <Route path="/address" component={Address} exact/>
                     <Route path="/logs" component={Logs} exact/>

@@ -1,0 +1,174 @@
+$color-online: #4CA086
+$color-header-online: #D5E9E0
+$color-background-online: #F9F7F2
+
+$color-offline: #959595
+$color-header-offline: #E5E5E5
+$color-background-offline: #F9F7F2
+
+$color-disable: #D27158
+$color-header-disable: #F7E4E4
+$color-background-disable: #F9F7F2
+
+$color-overload: #D27158
+$color-header-overload: #D5E9E0
+$color-background-overload: #F9F7F2
+
+$color-under-load: #D27158
+$color-header-under-load: #D5E9E0
+$color-background-under-load: #F9F7F2
+
+
+.temp-sensor-card
+  width: 49%
+  border-radius: 5px
+
+  .header
+    height: 20px
+    display: flex
+    justify-content: space-between
+    border-radius: 5px 5px 0 0
+    line-height: 20px
+
+    .slot-no
+      padding-left: 10px
+
+    .state
+      padding-right: 10px
+
+      .humidity
+        padding: 0 5px
+        font-size: 0.9rem
+
+      .dot
+        width: 10px
+        height: 10px
+        border-radius: 50%
+        display: inline-block
+        margin-right: 5px
+
+      .text
+        font-size: 0.9rem
+
+  .body
+    display: flex
+    justify-content: space-between
+    height: 50px
+
+    .delimiter
+      width: 1px
+      height: 80%
+      background-color: #E3E2E1
+
+    .temp
+      width: 49%
+      text-align: center
+
+      .value
+        font-size: 1.5rem
+        font-weight: bold
+        line-height: 50px
+
+      .label
+        font-size: .9rem
+
+    .state
+      width: 49%
+      text-align: center
+
+      .value
+        font-size: 1.5rem
+        font-weight: bold
+        line-height: 50px
+
+      .label
+        font-size: .9rem
+
+.temp-sensor-card-online
+  background-color: $color-background-online
+
+  .header
+    background-color: $color-header-online
+
+    .slot-no
+      color: $color-online
+
+    .state
+      color: $color-online
+
+      .dot
+        background-color: $color-online
+
+.temp-sensor-card-offline
+  background-color: $color-background-offline
+
+  .header
+    background-color: $color-header-offline
+
+    .slot-no
+      color: $color-offline
+
+    .state
+      color: $color-offline
+
+      .dot
+        background-color: $color-offline
+
+.temp-sensor-card-disable
+  background-color: $color-background-disable
+
+  .header
+    background-color: $color-header-disable
+
+    .slot-no
+      color: $color-disable
+
+    .state
+      color: $color-disable
+
+      .dot
+        background-color: $color-disable
+
+.temp-sensor-card-overload
+  background-color: $color-background-overload
+
+  .header
+    background-color: $color-header-overload
+
+    .slot-no
+      color: $color-overload
+
+    .state
+      color: $color-overload
+
+      .dot
+        background-color: $color-overload
+
+.temp-sensor-card-under-load
+  background-color: $color-background-under-load
+
+  .header
+    background-color: $color-header-under-load
+
+    .slot-no
+      color: $color-under-load
+
+    .state
+      color: $color-under-load
+
+      .dot
+        background-color: $color-under-load
+
+.body-overflow
+  .value
+    color: #D27158
+
+  .label
+    color: #D27158
+
+.body-ok
+  .value
+    color: #4CA086
+
+  .label
+    color: #C2C1BD
