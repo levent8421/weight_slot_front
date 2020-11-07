@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {object} from 'prop-types';
+import {bool, func, object} from 'prop-types';
 import './SlotCard.sass';
 import {asKg, asStateString} from '../../util/DataConvertor';
 
@@ -21,9 +21,13 @@ const SLOT_CARD_CLASS_TABLE = {
     5: 'slot-card-under-load',
 };
 
-const slotCardClass = state => {
+const slotCardClass = (state, highLight) => {
     const res = ['slot-card'];
-    res.push(SLOT_CARD_CLASS_TABLE[state]);
+    if (highLight) {
+        res.push('slot-card-highlight');
+    } else {
+        res.push(SLOT_CARD_CLASS_TABLE[state]);
+    }
     return res.join(' ');
 };
 const TOLERANCE_STATE_CLASS_TABLE = {
@@ -39,10 +43,12 @@ const pcsClass = state => {
 class SlotCard extends Component {
     static propTypes = {
         slot: object.isRequired,
+        onClick: func.isRequired,
+        highLight: bool.isRequired,
     };
 
     render() {
-        const {slot} = this.props;
+        const {slot, onClick, highLight} = this.props;
         if (!slot.sensors) {
             return null;
         }
@@ -53,7 +59,7 @@ class SlotCard extends Component {
         const pcs = formatPcs(count);
         const skuNo = formatSkuNo(sku.skuNo);
 
-        const slotCardClassStr = slotCardClass(state);
+        const slotCardClassStr = slotCardClass(state, highLight);
         const pcsClassStr = pcsClass(toleranceState);
         return (
             <div className={slotCardClassStr}>
@@ -76,7 +82,7 @@ class SlotCard extends Component {
                         </div>
                     </div>
                     <div className="delimiter"/>
-                    <div className={pcsClassStr}>
+                    <div className={pcsClassStr} onClick={() => onClick(slot)}>
                         <span className="value">
                             {pcs}
                         </span>

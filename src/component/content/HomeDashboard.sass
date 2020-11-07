@@ -1,3 +1,7 @@
+.tabs-wrapper
+  padding: 0 15px
+  background-color: #FEFFFF
+
 .tabs
   display: flex
   justify-content: start
@@ -7,8 +11,28 @@
   box-shadow: 0 3px #E4E2D3
 
   .item
-    height: 30px
-    padding: 20px 20px
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+
+    .text
+      padding: 0 10px
+      line-height: 40px
+      color: #BABBBB
+      font-weight: bold
+
+    .focus
+      height: 4px
+      width: 0
+      background-color: #00A862
+      transition: all .2s
+
+  .item-focus
+    .text
+      color: #1E1E1E
+
+    .focus
+      width: 100%
 
 .search-notice
   span

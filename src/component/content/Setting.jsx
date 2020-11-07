@@ -16,18 +16,18 @@ import SensorDetails from './setting/SensorDetails'
 import ThSensorSetting from './setting/ThSensorSetting'
 import ThSensorDetailsSetting from './setting/ThSensorDetailsSetting'
 import ExtraPageSetting from './setting/ExtraPageSetting'
-import {connect} from 'react-redux';
-
-const mapAction2Props = (dispatch, props) => {
-    return {
-        ...props,
-    };
-};
+import {mapStateAndAction} from '../../store/storeUtils';
 
 class Setting extends Component {
     constructor(props) {
         super(props);
         this.state = {};
+    }
+
+    componentDidMount() {
+        const {showHeader, setTabBarState} = this.props;
+        showHeader(true);
+        setTabBarState(true);
     }
 
     render() {
@@ -56,4 +56,4 @@ class Setting extends Component {
     }
 }
 
-export default connect(null, mapAction2Props)(Setting);
+export default mapStateAndAction(Setting);

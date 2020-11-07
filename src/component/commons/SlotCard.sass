@@ -18,6 +18,11 @@ $color-under-load: #D27158
 $color-header-under-load: #D5E9E0
 $color-background-under-load: #F9F7F2
 
+$color-highlight: #8AB46A
+$color-header-highlight: #E2E2A4
+$color-background-highlight: #F9EBAF
+$color-shadow-highlight: #F9D739
+
 .slot-card
   width: 49%
   margin: 5px 0
@@ -35,6 +40,7 @@ $color-background-under-load: #F9F7F2
 
     .state
       height: 100%
+      line-height: 20px
 
       .weight
         padding: 0 5px
@@ -51,6 +57,7 @@ $color-background-under-load: #F9F7F2
       .text
         margin: 0
         padding: 0 10px 0 5px
+        font-size: .8rem
 
   .body
     width: 100%
@@ -149,6 +156,20 @@ $color-background-under-load: #F9F7F2
 
       .dot
         background-color: $color-under-load
+
+.slot-card-highlight
+  background-color: $color-background-highlight
+  box-shadow: 0 0 5px $color-shadow-highlight
+  border: 1px solid $color-shadow-highlight
+
+  .header
+    background-color: $color-header-highlight
+
+    .state
+      color: $color-highlight
+
+      .dot
+        background-color: $color-highlight
 
 .count-credible
   .value

@@ -3,12 +3,13 @@ import {mapStateAndAction} from '../../store/storeUtils';
 import './HomeDashboard.sass';
 import SlotGroup from '../commons/SlotGroup';
 import {NoticeBar, SearchBar, Toast, WingBlank} from 'antd-mobile';
-import {ScanOutlined} from '@ant-design/icons';
+import {ScanOutlined, WarningOutlined} from '@ant-design/icons';
 import {highlightBySku} from '../../api/slot';
 import {fetchDashboardData} from '../../api/dashboard';
 import {groupSlots, lastHighlightSlot} from '../../util/DataConvertor';
 import FetcherTask from '../../util/FetcherTask';
 import TempSensorCard from '../commons/TempSensorCard';
+import SlotOperationModal from '../commons/SlotOperationModal';
 
 const SEARCH_NOTICE_BAR_AUTO_CLEAN_DURATION = 5000;
 const asHighlightSlotTable = slots => {
@@ -54,7 +55,7 @@ const dict2List = dict => {
 };
 
 const renderTempSensors = sensors => {
-    if (!sensors) {
+    if (!sensors || sensors.length <= 0) {
         return null;
     }
     return (<>
@@ -66,16 +67,23 @@ const renderTempSensors = sensors => {
         </div>
     </>);
 };
+const SETTING_PAGE_DELAY = 500;
+const ENTER_CHAR_CODE = 13;
 
 class HomeDashboard extends Component {
     constructor(props) {
         super(props);
+        this.rootDom = document;
         this.state = {
             searchValue: '',
             highlightSlotTable: {},
             noticeSlot: null,
             groupedSlots: [],
             tempSensors: [],
+            currentTab: 1,
+            slotOperationVisible: false,
+            selectedSlot: {},
+            errorNotice: null,
         };
     }
 
@@ -85,12 +93,43 @@ class HomeDashboard extends Component {
         setTabBarState(false);
         showHeader(false);
         this.initFetcher();
+        this.registerKeyPressHandler();
     }
 
     componentWillUnmount() {
         if (this.fetcherTask) {
             this.fetcherTask.stop();
         }
+        this.cancelKeyPressHandler();
+    }
+
+    cancelKeyPressHandler() {
+        this.rootDom.onkeypress = null;
+    }
+
+    registerKeyPressHandler() {
+        const _this = this;
+        this.rootDom.onkeypress = e => {
+            const {tagName} = e.target;
+            if (tagName.toLowerCase() !== 'body') {
+                return;
+            }
+            const {keyCode} = e;
+            if (keyCode === ENTER_CHAR_CODE) {
+                _this.submitSearch();
+                return;
+            }
+            const char = String.fromCharCode(keyCode);
+            const {searchValue} = _this.state;
+            _this.setState({
+                searchValue: searchValue + char,
+            });
+        };
+    }
+
+    submitSearch() {
+        const {searchValue} = this.state;
+        this.searchSku(searchValue);
     }
 
     initFetcher() {
@@ -101,8 +140,16 @@ class HomeDashboard extends Component {
                 _this.onDashboardDataRefresh(data);
             },
             duration: 1000,
+            onError(err) {
+                _this.onFetcherError(err);
+            }
         });
         this.fetcherTask.start();
+    }
+
+    onFetcherError(err) {
+        console.error('Error on fetch dashboard data!', err);
+        this.setState({errorNotice: err.toString()})
     }
 
     onDashboardDataRefresh(data) {
@@ -112,6 +159,7 @@ class HomeDashboard extends Component {
         this.setState({
             groupedSlots,
             tempSensors,
+            errorNotice: null,
         });
     }
 
@@ -135,20 +183,77 @@ class HomeDashboard extends Component {
         });
     }
 
+    toSettingPage() {
+        this.setState({currentTab: 2});
+        Toast.loading('跳转中', 1, null, true);
+        const {history} = this.props;
+        setTimeout(() => {
+            history.push({
+                pathname: '/setting/',
+            });
+        }, SETTING_PAGE_DELAY);
+    }
+
+    onSlotCardClick(slot) {
+        this.setState({
+            selectedSlot: slot,
+            slotOperationVisible: true,
+        })
+    }
+
+    renderErrorNotice() {
+        const {errorNotice} = this.state;
+        if (!errorNotice) {
+            return null;
+        }
+        return (<NoticeBar icon={<WarningOutlined/>}>
+            {errorNotice}
+        </NoticeBar>)
+    }
+
+    renderSlotOperationModal() {
+        const {slotOperationVisible, selectedSlot} = this.state;
+        if (!slotOperationVisible) {
+            return null;
+        }
+        return (<SlotOperationModal
+            slot={selectedSlot}
+            onClose={() => this.setState({slotOperationVisible: false})}/>);
+    }
+
+    renderTabs() {
+        const {currentTab} = this.state;
+        const tab1Class = ['item'];
+        const tab2Class = ['item'];
+        if (currentTab === 1) {
+            tab1Class.push('item-focus');
+        } else {
+            tab2Class.push('item-focus');
+        }
+        return (<div className="tabs-wrapper">
+            <div className="tabs">
+                <div className={tab1Class.join(' ')} onClick={() => this.setState({currentTab: 1})}>
+                    <div className="text">重力货道数据</div>
+                    <div className="focus"/>
+                </div>
+                <div className={tab2Class.join(' ')} onClick={() => this.toSettingPage()}>
+                    <div className="text">重力货道配置</div>
+                    <div className="focus"/>
+                </div>
+            </div>
+        </div>);
+    }
+
     render() {
-        const {searchValue, noticeSlot, groupedSlots, tempSensors} = this.state;
+        const {searchValue, noticeSlot, groupedSlots, tempSensors, highlightSlotTable} = this.state;
         return (
             <div className="home-dashboard">
-                <div className="tabs">
-                    <div className="item">
-                        <div className="text">看板</div>
-                        <div className="focus"/>
-                    </div>
-                    <div className="item">
-                        <div className="text">配置</div>
-                        <div className="focus"/>
-                    </div>
-                </div>
+                {
+                    this.renderErrorNotice()
+                }
+                {
+                    this.renderTabs()
+                }
                 <SearchBar value={searchValue}
                            placeholder="请输入搜索的SKU号或扫描二维码"
                            onSubmit={text => this.searchSku(text)}
@@ -158,7 +263,10 @@ class HomeDashboard extends Component {
                 }
                 <WingBlank className="slots">
                     {
-                        groupedSlots.map(group => <SlotGroup group={group} key={group.name}/>)
+                        groupedSlots.map(group => <SlotGroup group={group}
+                                                             highlightSlotTable={highlightSlotTable}
+                                                             onCardClick={slot => this.onSlotCardClick(slot)}
+                                                             key={group.name}/>)
                     }
                 </WingBlank>
                 <WingBlank className="temp-sensors">
@@ -167,6 +275,9 @@ class HomeDashboard extends Component {
                     }
                 </WingBlank>
                 <div className="blank">-</div>
+                {
+                    this.renderSlotOperationModal()
+                }
             </div>
         );
     }
