@@ -1,10 +1,17 @@
 import React, {Component} from 'react';
 import {asyncDeleteConnection, asyncFetchConnection, setTabBarState, setTitle} from '../../../store/actionCreators';
-import {ActionSheet, Button, Flex, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
+import {ActionSheet, Button, Card, Flex, InputItem, List, Modal, Picker, Progress, Toast, WingBlank} from 'antd-mobile';
 import {asConnectionType} from '../../../util/DataConvertor';
 import './ConnectionSetting.sass'
-import {createConnection, scanDevice, scanPort, startScanTempHumiSensors} from '../../../api/connection';
+import {
+    createConnection,
+    fetchScanProgress,
+    scanDevice,
+    scanPort,
+    startScanTempHumiSensors
+} from '../../../api/connection';
 import {connect} from 'react-redux';
+import FetcherTask from '../../../util/FetcherTask';
 
 const ConnectionOperations = [
     '删除',
@@ -37,6 +44,26 @@ const mapState2Props = (state, props) => {
         connections: state.connections,
     };
 };
+const SCAN_PROGRESS_FETC_DURATION = 1000;
+const scanResultMap2Arr = result => {
+    const res = [];
+    for (let key in result) {
+        if (!result.hasOwnProperty(key)) {
+            continue;
+        }
+        const item = result[key];
+        res.push({
+            ...item,
+            address: key,
+        });
+    }
+    return res.sort((a, b) => a.address - b.address);
+};
+const scanStateTable = {
+    1: '准备扫描',
+    2: '扫描中',
+    3: '扫描结束',
+};
 
 class ConnectionSetting extends Component {
     constructor(props) {
@@ -47,7 +74,18 @@ class ConnectionSetting extends Component {
                 type: null,
                 target: ''
             },
-            serialPorts: []
+            serialPorts: [],
+            scanProgressVisible: false,
+            scanProgress: {
+                progress: 50,
+                start: 0,
+                end: 0,
+                address: -1,
+                result: [],
+                errors: [],
+                state: 1,
+            },
+            scanError: null,
         };
         this.props.setTitle('物理连接设置');
     }
@@ -57,10 +95,63 @@ class ConnectionSetting extends Component {
         this.props.setTabBarState(false);
     }
 
+    startFetchScanProgress() {
+        if (this.scanProgressFetcher) {
+            this.scanProgressFetcher.stop();
+        }
+        const _this = this;
+        this.scanProgressFetcher = new FetcherTask({
+            fetchData: fetchScanProgress,
+            onNewData: data => {
+                const {currentAddress, end, start, progress, scanResult, errors, state} = data;
+                const scanProgress = {
+                    progress: progress.toFixed(2),
+                    end: end,
+                    start: start,
+                    address: currentAddress,
+                    result: scanResultMap2Arr(scanResult),
+                    errors: errors,
+                    state: state,
+                };
+                _this.setState({scanProgress: scanProgress});
+                if (state === 3) {
+                    _this.scanProgressFetcher.stop();
+                    Modal.alert('扫描完成', '扫描完成', [
+                        {
+                            text: '确认',
+                            onPress() {
+                                _this.setState({scanProgressVisible: false});
+                            }
+                        }
+                    ]);
+                }
+            },
+            duration: SCAN_PROGRESS_FETC_DURATION,
+            onError: err => {
+                console.error('Fetch scan progress error!', err);
+                _this.setState({scanError: err.toString()});
+            },
+        });
+        this.scanProgressFetcher.start();
+        this.setState({
+            scanProgressVisible: true
+        });
+    }
+
+    stopFetchScanProgress() {
+        if (this.scanProgressFetcher) {
+            this.scanProgressFetcher.stop();
+            this.scanProgressFetcher = null;
+        }
+        this.setState({
+            scanProgressVisible: false,
+        });
+    }
+
     render() {
         const {Item} = List;
         const {connections} = this.props;
-        const {createDialogVisible} = this.state;
+        const {createDialogVisible, scanProgressVisible, scanProgress} = this.state;
         const {create} = this.state;
         return (
             <div>
@@ -119,6 +210,57 @@ class ConnectionSetting extends Component {
                         }
                     </List>
                 </Modal>
+                <Modal visible={scanProgressVisible} title="扫描进度">
+                    <WingBlank>
+                        <Card>
+                            <Card.Header title="扫描进度" extra={scanStateTable[scanProgress.state]}/>
+                            <Card.Body>
+                                <Progress percent={scanProgress.progress} position="normal"/>
+                                <Flex className="scan-overview">
+                                    <Flex.Item>
+                                        <p className="name">开始地址</p>
+                                        <p className="value">{scanProgress.start}</p>
+                                    </Flex.Item>
+                                    <Flex.Item>
+                                        <p className="name">结束地址</p>
+                                        <p className="value">{scanProgress.end}</p>
+                                    </Flex.Item>
+                                    <Flex.Item>
+                                        <p className="name">扫描进度</p>
+                                        <p className="value">{scanProgress.progress}%</p>
+                                    </Flex.Item>
+                                    <Flex.Item>
+                                        <p className="name">发现设备</p>
+                                        <p className="value">{scanProgress.result.length}</p>
+                                    </Flex.Item>
+                                    <Flex.Item>
+                                        <p className="name">正在扫描</p>
+                                        <p className="value">ADDR:{scanProgress.address}</p>
+                                    </Flex.Item>
+                                </Flex>
+                                <Button type="primary" onClick={() => this.stopFetchScanProgress()}>后台扫描</Button>
+                            </Card.Body>
+                        </Card>
+                        <Flex>
+                            <Flex.Item>
+                                <List renderHeader={() => '扫描结果:'}>
+                                    {scanProgress.result.map(item => (
+                                        <List.Item key={item.address} extra={item.address}>
+                                            {item.sensorSn}/{item.elabelSn}
+                                        </List.Item>))}
+                                </List>
+                            </Flex.Item>
+                            <Flex.Item>
+                                <List renderHeader={() => '错误信息:'}>
+                                    {
+                                        scanProgress.errors.map((item, index) => (
+                                            <List.Item key={index} extra={index}>{item}</List.Item>))
+                                    }
+                                </List>
+                            </Flex.Item>
+                        </Flex>
+                    </WingBlank>
+                </Modal>
             </div>
         );
     }
@@ -139,6 +281,7 @@ class ConnectionSetting extends Component {
     }
 
     scanConnection(connection) {
+        const _this = this;
         Modal.alert('扫描重力传感器!', '扫描该连接下的传感器？?',
             [
                 {
@@ -148,6 +291,7 @@ class ConnectionSetting extends Component {
                     text: '扫描',
                     onPress: () => {
                         scanDevice(connection.id).then(() => {
+                            _this.startFetchScanProgress();
                             Toast.show('扫描已开始!', 2, false)
                         });
                     }

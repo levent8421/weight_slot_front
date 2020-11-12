@@ -158,6 +158,7 @@ export const lastHighlightSlot = slots => {
     if (!slots) {
         return null;
     }
+    debugger;
     let lastTime = -1;
     let lastSlot = null;
     for (let slot of slots) {
@@ -165,7 +166,7 @@ export const lastHighlightSlot = slots => {
             continue;
         }
         const skuUpdateTime = parseDate(slot.skuUpdateTime);
-        if (skuUpdateTime && skuUpdateTime.hasOwnProperty('getTime')) {
+        if (skuUpdateTime && skuUpdateTime['getTime']) {
             const time = skuUpdateTime.getTime();
             if (time - lastTime > 0) {
                 lastTime = time;

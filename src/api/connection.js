@@ -45,3 +45,12 @@ export const startScanTempHumiSensors = connectionId => {
         method: 'post',
     });
 };
+
+
+export const fetchScanProgress = () => {
+    return request({
+        url: '/api/connection/_scan-progress',
+        method: 'get',
+        hideLoading: true,
+    });
+};
