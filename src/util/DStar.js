@@ -3,7 +3,7 @@ const SQRT2 = 1.4142135623730951;
 const calcDistance = (pa, pb) => {
     const dx = Math.abs(pa.tx - pb.tx);
     const dy = Math.abs(pa.ty - pb.ty);
-    return dx + dy;
+    return (dx + dy) / 2;
 };
 const calcCoast = (current, dx, dy) => {
     if (dx === 0) {
@@ -48,18 +48,32 @@ class CloseList {
     hasKey(key) {
         return this.pointTable.hasOwnProperty(key);
     }
+
+    asPath() {
+        const res = [];
+        for (const key in this.pointTable) {
+            if (!this.pointTable.hasOwnProperty(key)) {
+                continue;
+            }
+            res.push(this.pointTable[key]);
+        }
+        return res.sort((a, b) => b.priority - a.priority);
+    }
 }
 
 class DStar {
     constructor(props) {
-        const {onRePlan, start, target, requestPoint, onError, mapSize} = props;
+        const {onRePlan, start, target, requestPoint, onError, mapSize, updateCurrent} = props;
         this.onRePlan = onRePlan;
         this.current = start;
         this.target = target;
         this.requestPoint = requestPoint;
         this.onError = onError;
         this.mapSize = mapSize;
+        this.updateCurrent = updateCurrent;
         this.wallCache = {};
+        this.planPath = [];
+        this.planPathIndex = 0;
     }
 
     firstPlan() {
@@ -72,7 +86,8 @@ class DStar {
         let steps = 0;
         let nextPoint = target;
         const closeList = new CloseList();
-        while (!pointEquals(current, target)) {
+        closeList.push(target);
+        while (!pointEquals(current, nextPoint)) {
             steps++;
             if (steps > MAX_STEP) {
                 this.onError('Target is not available! Step overflow1');
@@ -85,7 +100,10 @@ class DStar {
             }
             closeList.push(nextPoint);
         }
-        console.log(closeList);
+        const planPath = closeList.asPath();
+        this.planPath = planPath;
+        this.planPathIndex = 0;
+        this.onRePlan(planPath);
         return closeList;
     }
 
@@ -103,7 +121,7 @@ class DStar {
         if (openList.length <= 0) {
             return null;
         }
-        return calcMin(openList);
+        return calcMin(openList, current, target);
     }
 
     nearPoint(point, closeList, dx, dy) {
@@ -115,7 +133,10 @@ class DStar {
             return null;
         }
         const key = `${nextX}/${nextY}`;
-        if (closeList.hasKey(key) || this.wallCache.hasOwnProperty(key)) {
+        if (closeList.hasKey(key)) {
+            return null;
+        }
+        if (this.wallCache.hasOwnProperty(key)) {
             return null;
         }
         return {
@@ -126,7 +147,49 @@ class DStar {
     }
 
     go() {
-        return this.current;
+        this.updateNearPointInfo();
+        this.planPathIndex++;
+        if (this.planPathIndex >= this.planPath.length) {
+            return;
+        }
+        const point = this.planPath[this.planPathIndex];
+        if (this.wallCache.hasOwnProperty(point.key)) {
+            this.planPath = [];
+            this.planPathIndex = 0;
+            this.rePlan();
+            return;
+        }
+        this.current = point;
+        this.updateCurrent(point);
+    }
+
+    updateNearPointInfo() {
+        const current = this.current;
+        this.updatePointInfo(current, 1, 1);
+        this.updatePointInfo(current, 1, 0);
+        this.updatePointInfo(current, 1, -1);
+        this.updatePointInfo(current, 0, 1);
+        this.updatePointInfo(current, 0, -1);
+        this.updatePointInfo(current, -1, 1);
+        this.updatePointInfo(current, -1, 0);
+        this.updatePointInfo(current, -1, -1);
+    }
+
+    updatePointInfo(base, xOffset, yOffset) {
+        const x = base.tx + xOffset;
+        const y = base.ty + yOffset;
+        const {width, height} = this.mapSize;
+        if (x > width || y > height || x < 0 || y < 0) {
+            return;
+        }
+        const point = this.requestPoint(x, y);
+        if (point == null) {
+            // 为墙
+            this.wallCache[`${x}/${y}`] = {
+                tx: x,
+                ty: y,
+            };
+        }
     }
 }
 

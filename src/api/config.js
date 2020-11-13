@@ -2,10 +2,11 @@ import {request} from './request';
 
 
 export const fetchEnableTabBar = () => {
-    return request({
-        url: '/api/config/application.ui.enable_tabBar',
-        method: 'get',
-    });
+    // return request({
+    //     url: '/api/config/application.ui.enable_tabBar',
+    //     method: 'get',
+    // });
+    return new Promise(resolve => resolve({value: 'true'}));
 };
 
 export const setEnableTabBar = enable => {

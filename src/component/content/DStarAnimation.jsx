@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './DStarAnimation.sass';
 import {mapStateAndAction} from '../../store/storeUtils';
-import {Button, List} from 'antd-mobile';
+import {Button, Flex, List} from 'antd-mobile';
 import DStarBoard, {CLICK_ACTION_ADD_WALL, CLICK_ACTION_REMOVE_WALL} from '../../util/DStarBoard';
 
 const CLICK_ACTION_NAMES = {};
@@ -26,6 +26,10 @@ class DStarAnimation extends Component {
         }
         if (this.board && !this.board.checkCanvasChanged(canvas)) {
             return;
+        }
+        if (this.board) {
+            this.board.shutdown();
+            this.board = null;
         }
         this.board = new DStarBoard({
             canvas,
@@ -52,7 +56,6 @@ class DStarAnimation extends Component {
     render() {
         const {clickAction} = this.state;
         const clickActionName = CLICK_ACTION_NAMES[clickAction];
-        console.log(clickAction, clickActionName, CLICK_ACTION_NAMES);
         return (
             <div className="d-star">
                 <List renderHeader={() => 'State'}>
@@ -63,9 +66,18 @@ class DStarAnimation extends Component {
                         Target
                     </List.Item>
                     <List.Item>
-                        <Button type="primary" size="small" onClick={() => this.changeBoardClickAction()}>
-                            {clickActionName}
-                        </Button>
+                        <Flex>
+                            <Flex.Item>
+                                <Button type="primary" size="small" onClick={() => this.changeBoardClickAction()}>
+                                    {clickActionName}
+                                </Button>
+                            </Flex.Item>
+                            <Flex.Item>
+                                <Button type="primary" size="small" onClick={() => this.board.setupTimer()}>
+                                    Start
+                                </Button>
+                            </Flex.Item>
+                        </Flex>
                     </List.Item>
                 </List>
                 <canvas className="board-canvas" width={500} height={500} ref={canvas => this.onCanvasBind(canvas)}>
