@@ -66,6 +66,11 @@ class About extends Component {
                     }}>
                         PID Animation
                     </List.Item>
+                    <List.Item arrow="horizontal" onClick={() => {
+                        this.props.history.push({pathname: '/dstar'})
+                    }}>
+                        DStar Animation
+                    </List.Item>
                 </List>
             </div>
         );
