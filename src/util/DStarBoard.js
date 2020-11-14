@@ -10,8 +10,9 @@ const PLAN_PATH_COLOR = '#3271FA';
 const PLAN_PATH_POINT_RADIUS = 3;
 const PLAN_PATH_POINT_X_OFFSET = WIDTH_STEP / 2;
 const PLAN_PATH_POINT_Y_OFFSET = HEIGHT_STEP / 2;
-export const CLICK_ACTION_ADD_WALL = 0x01;
-export const CLICK_ACTION_REMOVE_WALL = 0x02;
+export const CLICK_ACTION_ADD_WALL = 0x00;
+export const CLICK_ACTION_REMOVE_WALL = 0x01;
+export const CLICK_ACTION_MARK_TARGET = 0x02;
 
 const getPressPoint = e => {
     const {offsetX, offsetY} = e;
@@ -36,10 +37,12 @@ const drawCross = (ctx, point, color) => {
 class DStarBoard {
     constructor(props) {
         const _this = this;
-        const {canvas, height, width} = props;
+        const {canvas, height, width, onMessage, onRePlan} = props;
         this.canvas = canvas;
         this.height = height;
         this.width = width;
+        this.onMessage = onMessage;
+        this.onRePlan = onRePlan;
         this.wallList = {};
         this.clickAction = CLICK_ACTION_ADD_WALL;
         this.currentPoint = {x: 100, y: 100, tx: 10, ty: 10, key: '10/10'};
@@ -85,6 +88,7 @@ class DStarBoard {
                 console.log('Re Plan', list);
                 _this.planPath = list;
                 _this.rePaint();
+                _this.onRePlan(list);
             },
             start,
             target,
@@ -97,6 +101,7 @@ class DStarBoard {
             },
             onError(err) {
                 console.log(err);
+                _this.onMessage(err);
             },
             updateCurrent(point) {
                 _this.currentPoint = point;
@@ -119,9 +124,18 @@ class DStarBoard {
             case CLICK_ACTION_REMOVE_WALL:
                 this.removeWall(point);
                 break;
+            case CLICK_ACTION_MARK_TARGET:
+                this.markTarget(point);
+                break;
             default:
                 return;
         }
+    }
+
+    markTarget(point) {
+        this.targetPoint = point;
+        this.dStar.setTarget(point);
+        this.dStar.firstPlan();
     }
 
     removeWall(point) {

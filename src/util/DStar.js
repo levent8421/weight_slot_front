@@ -3,7 +3,7 @@ const SQRT2 = 1.4142135623730951;
 const calcDistance = (pa, pb) => {
     const dx = Math.abs(pa.tx - pb.tx);
     const dy = Math.abs(pa.ty - pb.ty);
-    return (dx + dy) / 2;
+    return Math.max(dx, dy);
 };
 const calcCoast = (current, dx, dy) => {
     if (dx === 0) {
@@ -74,6 +74,10 @@ class DStar {
         this.wallCache = {};
         this.planPath = [];
         this.planPathIndex = 0;
+    }
+
+    setTarget(point) {
+        this.target = point;
     }
 
     firstPlan() {
