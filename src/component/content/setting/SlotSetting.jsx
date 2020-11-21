@@ -150,6 +150,13 @@ class SlotSetting extends Component {
                     mergeSlotsByIds(slots.map(slot => slot.id)).then(() => {
                         Toast.show('合并成功', 3, false);
                         this.fetchSlots();
+                    }).catch(err => {
+                        Toast.hide();
+                        const {data, status} = err;
+                        const {code, msg} = data;
+                        if (status === 200 && code === 400) {
+                            Modal.alert('操作提醒', msg, [{text: '知道了'}], 'android');
+                        }
                     });
                 },
             }
