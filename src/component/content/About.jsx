@@ -71,6 +71,11 @@ class About extends Component {
                     }}>
                         DStar Animation
                     </List.Item>
+                    <List.Item arrow="horizontal" onClick={() => {
+                        this.props.history.push({pathname: '/slide'})
+                    }}>
+                        Slide Animation
+                    </List.Item>
                 </List>
             </div>
         );
