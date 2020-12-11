@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {bool, func, object} from 'prop-types';
 import './SlotCard.sass';
 import {asKg, asStateString} from '../../util/DataConvertor';
+import {ERROR_STATE} from '../../context/metadata';
 
 const formatPcs = pcs => {
     if (pcs === 0) {
@@ -45,11 +46,15 @@ class SlotCard extends Component {
         slot: object.isRequired,
         onClick: func.isRequired,
         highLight: bool.isRequired,
+        errorOnly: bool.isRequired,
     };
 
     render() {
-        const {slot, onClick, highLight} = this.props;
+        const {slot, onClick, highLight, errorOnly} = this.props;
         if (!slot.sensors) {
+            return null;
+        }
+        if (errorOnly && !ERROR_STATE.hasOwnProperty(slot.state)) {
             return null;
         }
         const {state, data, sku} = slot;
@@ -61,10 +66,11 @@ class SlotCard extends Component {
 
         const slotCardClassStr = slotCardClass(state, highLight);
         const pcsClassStr = pcsClass(toleranceState);
+        const merged = slot.sensors.length > 1;
         return (
             <div className={slotCardClassStr}>
                 <div className="header">
-                    <div className="slot-no">{slot.slotNo}</div>
+                    <div className="slot-no">{slot.slotNo}{merged ? '(合并货道)' : ''}</div>
                     <div className="state">
                         <span className="weight">({weightInKg}kg)</span>
                         <div className="dot"/>

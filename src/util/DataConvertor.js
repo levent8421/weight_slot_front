@@ -1,4 +1,5 @@
 import {parseDate} from './datetimeUtils';
+import {STATE_TABLE} from '../context/metadata';
 
 export const asKg = g => {
     return (g / 1000.0).toFixed(3);
@@ -111,16 +112,9 @@ export const groupSlots = slots => {
     });
 };
 
-const stateTable = {
-    1: '使用中',
-    2: '离线',
-    3: '已停用',
-    4: '超载',
-    5: '欠载',
-};
 export const asStateString = state => {
-    if (state in stateTable) {
-        return stateTable[state];
+    if (state in STATE_TABLE) {
+        return STATE_TABLE[state];
     }
     return 'Unknown State:' + state;
 };

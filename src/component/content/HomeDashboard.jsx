@@ -80,10 +80,11 @@ class HomeDashboard extends Component {
             noticeSlot: null,
             groupedSlots: [],
             tempSensors: [],
-            currentTab: 1,
+            currentTab: 0,
             slotOperationVisible: false,
             selectedSlot: {},
             errorNotice: null,
+            showErrorOnly: false,
         };
     }
 
@@ -183,13 +184,13 @@ class HomeDashboard extends Component {
         });
     }
 
-    toSettingPage() {
-        this.setState({currentTab: 2});
+    switchPageWithDelay(path) {
+        this.setState({currentTab: 1});
         Toast.loading('跳转中', 1, null, true);
         const {history} = this.props;
         setTimeout(() => {
             history.push({
-                pathname: '/setting/',
+                pathname: path,
             });
         }, SETTING_PAGE_DELAY);
     }
@@ -223,21 +224,25 @@ class HomeDashboard extends Component {
 
     renderTabs() {
         const {currentTab} = this.state;
+        const tab0Class = ['item'];
         const tab1Class = ['item'];
         const tab2Class = ['item'];
-        if (currentTab === 1) {
-            tab1Class.push('item-focus');
-        } else {
-            tab2Class.push('item-focus');
-        }
+        const tabsClass = [tab0Class, tab1Class, tab2Class];
+        tabsClass[currentTab].push('item-focus');
         return (<div className="tabs-wrapper">
             <div className="tabs">
-                <div className={tab1Class.join(' ')} onClick={() => this.setState({currentTab: 1})}>
+                <div className={tab0Class.join(' ')}
+                     onClick={() => this.setState({currentTab: 0, showErrorOnly: false,})}>
                     <div className="text">重力货道数据</div>
                     <div className="focus"/>
                 </div>
-                <div className={tab2Class.join(' ')} onClick={() => this.toSettingPage()}>
+                <div className={tab1Class.join(' ')} onClick={() => this.switchPageWithDelay('/setting/')}>
                     <div className="text">重力货道配置</div>
+                    <div className="focus"/>
+                </div>
+                <div className={tab2Class.join(' ')}
+                     onClick={() => this.setState({currentTab: 2, showErrorOnly: true})}>
+                    <div className="text">异常货道排查</div>
                     <div className="focus"/>
                 </div>
             </div>
@@ -245,7 +250,7 @@ class HomeDashboard extends Component {
     }
 
     render() {
-        const {searchValue, noticeSlot, groupedSlots, tempSensors, highlightSlotTable} = this.state;
+        const {searchValue, noticeSlot, groupedSlots, tempSensors, highlightSlotTable, showErrorOnly} = this.state;
         return (
             <div className="home-dashboard">
                 {
@@ -266,7 +271,8 @@ class HomeDashboard extends Component {
                         groupedSlots.map(group => <SlotGroup group={group}
                                                              highlightSlotTable={highlightSlotTable}
                                                              onCardClick={slot => this.onSlotCardClick(slot)}
-                                                             key={group.name}/>)
+                                                             key={group.name}
+                                                             errorOnly={showErrorOnly}/>)
                     }
                 </WingBlank>
                 <WingBlank className="temp-sensors">

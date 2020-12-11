@@ -45,35 +45,23 @@ class SlotDetailSetting extends Component {
         return (
             <div className="slotDetail">
                 <List renderHeader={() => '货道信息'}>
-                    <Item key="slotNo">
-                        <InputItem placeholder="逻辑货道号" value={slot.slotNo}
-                                   onChange={text => this.setUpdateSlotProp({slotNo: text})}>货道号</InputItem>
-                    </Item>
-                    <Item key="SkuName">
-                        <InputItem placeholder="SKU名称" value={slot.skuName}
-                                   onChange={text => this.setUpdateSlotProp({skuName: text})}>SKU名称</InputItem>
-                    </Item>
-                    <Item key="skuNo">
-                        <InputItem placeholder="SKU号" value={slot.skuNo}
-                                   onChange={text => this.setUpdateSlotProp({skuNo: text})}>SKU号</InputItem>
-                    </Item>
-                    <Item key="skuApw">
-                        <InputItem placeholder="SKU单重" value={slot.skuApw}
-                                   type="number"
-                                   onChange={text => this.setUpdateSlotProp({skuApw: text})}>SKU单重</InputItem>
-                    </Item>
-                    <Item key="skuTolerance">
-                        <InputItem placeholder="SKU允差" value={slot.skuTolerance}
-                                   type="number"
-                                   onChange={text => this.setUpdateSlotProp({skuTolerance: text})}>SKU允差</InputItem>
-                    </Item>
-                    <Item key="skuShelfLifeOpenDays">
-                        <InputItem placeholder="开封后保质天数" value={slot.skuShelfLifeOpenDays}
-                                   type="number"
-                                   onChange={text => this.setUpdateSlotProp({skuShelfLifeOpenDays: text})}>
-                            保质期
-                        </InputItem>
-                    </Item>
+                    <InputItem placeholder="逻辑货道号" value={slot.slotNo}
+                               onChange={text => this.setUpdateSlotProp({slotNo: text})}>货道号</InputItem>
+                    <InputItem placeholder="SKU名称" value={slot.skuName}
+                               onChange={text => this.setUpdateSlotProp({skuName: text})}>SKU名称</InputItem>
+                    <InputItem placeholder="SKU号" value={slot.skuNo}
+                               onChange={text => this.setUpdateSlotProp({skuNo: text})}>SKU号</InputItem>
+                    <InputItem placeholder="SKU单重" value={slot.skuApw}
+                               type="money"
+                               onChange={text => this.setUpdateSlotProp({skuApw: text})}>SKU单重</InputItem>
+                    <InputItem placeholder="SKU允差" value={slot.skuTolerance}
+                               type="money"
+                               onChange={text => this.setUpdateSlotProp({skuTolerance: text})}>SKU允差</InputItem>
+                    <InputItem placeholder="开封后保质天数" value={slot.skuShelfLifeOpenDays}
+                               type="number"
+                               onChange={text => this.setUpdateSlotProp({skuShelfLifeOpenDays: text})}>
+                        保质期
+                    </InputItem>
                     <Item key="applyBtn">
                         <WingBlank><Button type="primary" onClick={() => this.applyModify()}>保存</Button></WingBlank>
                     </Item>

@@ -244,9 +244,19 @@ class SlotSetting extends Component {
     }
 
     doZeroAll() {
-        doZeroAll().then(() => {
-            Toast.show('全部货道已经被清零!');
-        });
+        Modal.alert('确认清零？', '确认清零全部货道？', [
+            {
+                text: '清零',
+                onPress: () => {
+                    doZeroAll().then(() => {
+                        Toast.show('全部货道已经被清零!');
+                    });
+                },
+            },
+            {
+                text: '取消',
+            }
+        ]);
     }
 
     fetchSlots() {

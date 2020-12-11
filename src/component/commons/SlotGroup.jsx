@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {func, object} from 'prop-types';
+import {bool, func, object} from 'prop-types';
 import './SlotGroup.sass';
 import SlotCard from './SlotCard';
 
@@ -8,7 +8,7 @@ const isHighLight = (slot, highLightSlotTable) => {
     return highLightSlotTable.hasOwnProperty(id);
 };
 
-const renderSlots = (slots, onCardClick, highLightSlotTable) => {
+const renderSlots = (slots, onCardClick, highLightSlotTable, errorOnly) => {
     if (!slots) {
         return;
     }
@@ -17,6 +17,7 @@ const renderSlots = (slots, onCardClick, highLightSlotTable) => {
             highLight={isHighLight(slot, highLightSlotTable)}
             slot={slot}
             key={slot.id}
+            errorOnly={errorOnly}
             onClick={slot => onCardClick(slot)}/>));
 };
 
@@ -25,6 +26,7 @@ class SlotGroup extends Component {
         group: object.isRequired,
         onCardClick: func.isRequired,
         highlightSlotTable: object.isRequired,
+        errorOnly: bool.isRequired,
     };
 
     constructor(props) {
@@ -33,14 +35,14 @@ class SlotGroup extends Component {
     }
 
     render() {
-        const {group, onCardClick, highlightSlotTable} = this.props;
+        const {group, onCardClick, highlightSlotTable, errorOnly} = this.props;
         const {name, slots} = group;
         return (
             <div className="slot-group">
                 <div className="group-name">{name}</div>
                 <div className="slot-list">
                     {
-                        renderSlots(slots, onCardClick, highlightSlotTable)
+                        renderSlots(slots, onCardClick, highlightSlotTable, errorOnly)
                     }
                 </div>
             </div>
