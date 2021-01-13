@@ -6,9 +6,10 @@ import './ConnectionSetting.sass'
 import {
     createConnection,
     fetchScanProgress,
+    refreshDeviceUsbId,
     scanDevice,
     scanPort,
-    startScanTempHumiSensors
+    startScanTempHumiSensors,
 } from '../../../api/connection';
 import {connect} from 'react-redux';
 import FetcherTask from '../../../util/FetcherTask';
@@ -17,6 +18,7 @@ const ConnectionOperations = [
     '删除',
     '扫描重力货道',
     '扫描温湿度传感器',
+    '刷新USB设备ID',
     '取消',
 ];
 const connectionTypes = [
@@ -377,6 +379,15 @@ class ConnectionSetting extends Component {
             ]);
     }
 
+    refreshDeviceUsbId(connection) {
+        const {id} = connection;
+        refreshDeviceUsbId(id).then(res => {
+            this.props.fetchConnection();
+            const {usbDeviceId} = res;
+            Toast.show(`ID:${usbDeviceId}`, 3, false);
+        });
+    }
+
     showConnectionOperations(connection) {
         ActionSheet.showActionSheetWithOptions({
             title: `${connection.target} 操作`,
@@ -393,6 +404,9 @@ class ConnectionSetting extends Component {
                     break;
                 case 2:
                     this.startScanTHSensors(connection);
+                    break;
+                case 3:
+                    this.refreshDeviceUsbId(connection);
                     break;
                 default:
                     break;

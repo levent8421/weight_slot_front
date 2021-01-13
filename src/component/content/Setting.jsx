@@ -7,7 +7,6 @@ import ConnectionSetting from './setting/ConnectionSetting'
 import SlotDetailSetting from './setting/SlotDetailSetting'
 import SystemSetting from './setting/SystemSetting'
 import SystemPropsSetting from './setting/SystemPropsSetting'
-import SlotSensorsSetting from './setting/SlotSensorsSetting'
 import Overview from './setting/Overview'
 import SystemCheck from './setting/SystemCheck'
 import MessageLog from './setting/MessageLog'
@@ -41,7 +40,7 @@ class Setting extends Component {
                     <Route path="/setting/slot-detail/:id" component={SlotDetailSetting} exact/>
                     <Route path="/setting/system" component={SystemSetting} exact/>
                     <Route path="/setting/system-props" component={SystemPropsSetting} exact/>
-                    <Route path="/setting/slot-sensors/:id" component={SlotSensorsSetting} exact/>
+                    {/*<Route path="/setting/slot-sensors/:id" component={SlotSensorsSetting} exact/>*/}
                     <Route path="/setting/overview" component={Overview} exact/>
                     <Route path="/setting/system-check" component={SystemCheck} exact/>
                     <Route path="/setting/message-log" component={MessageLog} exact/>

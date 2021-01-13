@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {func, object} from 'prop-types';
-import {Modal, Toast} from 'antd-mobile';
+import {Button, Flex, Modal, Toast} from 'antd-mobile';
 import './SlotOperationModal.sass';
 import {asStateString} from '../../util/DataConvertor';
-import {zeroOne} from '../../api/slot';
+import {toggleEnableState, zeroOne} from '../../api/slot';
 
 const renderSensor = sensor => {
     const state = asStateString(sensor.state);
@@ -47,6 +47,13 @@ class SlotOperationModal extends Component {
         ]);
     }
 
+    toggleEnableState() {
+        const {slot} = this.props;
+        toggleEnableState(slot.id).then(res => {
+            Toast.show(`货道${res.slotNo}操作成功`, 3, false);
+        });
+    }
+
     render() {
         const _this = this;
         const {slot, onClose} = this.props;
@@ -58,21 +65,7 @@ class SlotOperationModal extends Component {
                    maskClosable={true}
                    title={title}
                    transparent={true}
-                   onClose={onClose}
-                   footer={
-                       [
-                           {
-                               text: '关闭',
-                               onPress: onClose,
-                           },
-                           {
-                               text: '清零',
-                               onPress() {
-                                   _this.doZero()
-                               }
-                           }
-                       ]
-                   }>
+                   onClose={onClose}>
                 <div className="slot">
                     {slot.slotNo}
                 </div>
@@ -81,6 +74,17 @@ class SlotOperationModal extends Component {
                         renderSensors(sensors)
                     }
                 </div>
+                <Flex className="action-btns">
+                    <Flex.Item>
+                        <Button type="ghost" onClick={() => _this.toggleEnableState()}>启/停用</Button>
+                    </Flex.Item>
+                    <Flex.Item>
+                        <Button type="ghost" onClick={() => this.doZero()}>清零</Button>
+                    </Flex.Item>
+                    <Flex.Item>
+                        <Button type="ghost" onClick={onClose}>关闭</Button>
+                    </Flex.Item>
+                </Flex>
             </Modal>
         );
     }

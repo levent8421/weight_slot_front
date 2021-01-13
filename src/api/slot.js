@@ -96,3 +96,10 @@ export const resetSlotBySlots = ids => {
         },
     });
 };
+
+export const toggleEnableState = slotId => {
+    return request({
+        url: `/api/slot/${slotId}/_toggle-enable`,
+        method: 'post',
+    });
+};

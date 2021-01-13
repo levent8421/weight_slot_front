@@ -54,3 +54,11 @@ export const fetchScanProgress = () => {
         hideLoading: true,
     });
 };
+
+
+export const refreshDeviceUsbId = id => {
+    return request({
+        url: `/api/connection/${id}/_refresh-usb-id`,
+        method: 'post',
+    });
+};

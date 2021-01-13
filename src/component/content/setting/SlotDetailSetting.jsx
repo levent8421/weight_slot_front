@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {fetchDetail, toggleELabelState, updateSlot, zeroOne} from '../../../api/slot';
+import {fetchDetail, toggleELabelState, toggleEnableState, updateSlot, zeroOne} from '../../../api/slot';
 import {ActionSheet, Button, InputItem, List, Switch, Toast, WingBlank} from 'antd-mobile';
 import {setTitle} from "../../../store/actionCreators";
 import {connect} from 'react-redux';
@@ -9,6 +9,7 @@ import FloatButton from '../../commons/FloatButton';
 const ActionButtons = [
     '清零该货道',
     '删除货道',
+    '停用/启用货道',
     '取消',
 ];
 const {Item} = List;
@@ -75,11 +76,11 @@ class SlotDetailSetting extends Component {
                             platform="android"/>}>
                         启用电子标签
                     </List.Item>
-                    <List.Item
+                    {/*<List.Item
                         arrow="horizontal"
                         onClick={() => this.props.history.push({pathname: `/setting/slot-sensors/${slot.id}`})}>
                         货道传感器管理
-                    </List.Item>
+                    </List.Item>*/}
                 </List>
                 <FloatButton iconType="ellipsis" onClick={() => this.openOperation()}/>
             </div>
@@ -100,9 +101,18 @@ class SlotDetailSetting extends Component {
                 case 1:
                     Toast.show('暂时不能删除货道', 2, false);
                     break;
+                case 2:
+                    this.toggleEnableState();
+                    break;
                 default:
                 //Do nothing
             }
+        });
+    }
+
+    toggleEnableState() {
+        toggleEnableState(this.slotId).then(res => {
+            Toast.show(`${res.slotNo}货道操作成功`, 3, false);
         });
     }
 
