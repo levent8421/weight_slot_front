@@ -43,16 +43,16 @@ class AppTabBar extends React.Component {
                                      icon={<ExtraIcon className="buttonIcon"/>}
                                      selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe60c;</i>}
                                      onPress={() => this.pushPath('/extra')}/>
-                        <TabBar.Item title="日志"
+                        {/*<TabBar.Item title="日志"
                                      selected={path === '/logs'}
                                      icon={<i className="iconfont buttonIcon">&#xe60c;</i>}
                                      selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe60c;</i>}
-                                     onPress={() => this.pushPath('/logs')}/>
-                        <TabBar.Item title="编址"
+                                     onPress={() => this.pushPath('/logs')}/>*/}
+                        {/*<TabBar.Item title="编址"
                                      selected={path === '/address'}
                                      icon={<i className="iconfont buttonIcon">&#xe61b;</i>}
                                      selectedIcon={<i className="iconfont buttonIcon buttonIconChecked">&#xe61b;</i>}
-                                     onPress={() => this.pushPath('/address')}/>
+                                     onPress={() => this.pushPath('/address')}/>*/}
                         <TabBar.Item title="设置"
                                      selected={path === '/setting'}
                                      icon={<i className="iconfont buttonIcon">&#xe660;</i>}

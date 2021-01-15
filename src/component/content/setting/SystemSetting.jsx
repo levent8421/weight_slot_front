@@ -7,6 +7,44 @@ import {reloadLibPath} from '../../../api/serial';
 import {stopWeightService} from '../../../api/sensor';
 import {withRouter} from 'react-router-dom';
 
+const DATA_TO_SHOW = [
+    {
+        title: '应用名称',
+        key: 'appName',
+    },
+    {
+        title: '应用版本',
+        key: 'appVersion',
+    },
+    {
+        title: '数据库版本号',
+        key: 'application.db_version',
+    },
+    {
+        title: '数据库版本名称',
+        key: 'application.db_version_name',
+    },
+    {
+        title: '站点号',
+        key: 'application.station_id',
+    },
+    {
+        title: '显示导航栏',
+        key: 'application.ui.enable_tabBar',
+    },
+    {
+        title: '扩展页面地址',
+        key: 'extra.page_uri',
+    },
+    {
+        title: '进程ID',
+        key: 'pid',
+    },
+    {
+        title: '软滤波等级',
+        key: 'weight.soft_filter_level',
+    },
+];
 const mapAction2Props = (dispatch, props) => {
     return {
         ...props,
@@ -47,11 +85,11 @@ class SystemSetting extends Component {
         return (
             <div className="systemSettings">
                 <List renderHeader={() => '系统信息'}>
-                    <Item key="appName" extra={systemInfo.appName}>应用名称</Item>
-                    <Item key="appVersion" extra={systemInfo.appVersion}>应用版本</Item>
-                    <Item key="dbVersion" extra={systemInfo.dbVersion}>数据库版本</Item>
-                    <Item key="dbVersionName" extra={systemInfo.dbVersionName}>数据库版本名</Item>
-                    <Item key="pid" extra={systemInfo.pid}>进程ID</Item>
+                    {
+                        DATA_TO_SHOW.map(item => (<List.Item key={item.key} extra={systemInfo[item.key]}>
+                            {item.title}
+                        </List.Item>))
+                    }
                     <Item key="libPath" arrow="horizontal"
                           onClick={() => this.showLibLoadModal()}> 驱动路径: {systemInfo.libPath}</Item>
                 </List>
