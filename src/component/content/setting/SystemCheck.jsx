@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
 import {disconnectTcp, fetchDatabaseTables, fetchStatusTable, resetDatabase} from '../../../api/systemStatus';
-import {Button, Flex, InputItem, List, Modal, Picker, Toast} from 'antd-mobile';
+import {Button, Flex, InputItem, List, Modal, Picker, Switch, Toast} from 'antd-mobile';
 import {connect} from 'react-redux';
 import {setTitle} from '../../../store/actionCreators';
 import {withRouter} from 'react-router-dom';
-import {fetchSoftFilterLevel, updateSoftFilterLevel} from '../../../api/config';
+import {
+    fetchDisplayAutoUnit,
+    fetchSoftFilterLevel,
+    setDisplayAutoUnit,
+    updateSoftFilterLevel
+} from '../../../api/config';
 import {setCompensationState} from '../../../api/slot';
 import {cleanAllBackupSn, reloadSensors} from '../../../api/sensor';
 
@@ -68,6 +73,7 @@ class SystemCheck extends Component {
             databaseTables: [],
             softFilterLevel: -1,
             softFilterLevelLabel: '',
+            displayAutoUnit: 'false',
         };
     }
 
@@ -75,6 +81,7 @@ class SystemCheck extends Component {
         this.props.setTitle('系统检查');
         this.refreshStatusTable();
         this.refreshSoftFilterLevel();
+        this.refreshDisplayAutoUnitState();
     }
 
     refreshSoftFilterLevel() {
@@ -85,6 +92,13 @@ class SystemCheck extends Component {
                 softFilterLevelLabel: SoftFilterLevelTable[level],
                 softFilterLevel: level,
             });
+        });
+    }
+
+    refreshDisplayAutoUnitState() {
+        fetchDisplayAutoUnit().then(res => {
+            const {value} = res;
+            this.setState({displayAutoUnit: value});
         });
     }
 
@@ -118,7 +132,8 @@ class SystemCheck extends Component {
     }
 
     render() {
-        const {statusTable, databaseTables, softFilterLevel, softFilterLevelLabel} = this.state;
+        const _this = this;
+        const {statusTable, databaseTables, softFilterLevel, softFilterLevelLabel, displayAutoUnit} = this.state;
         const {tcpApi} = statusTable;
         return (
             <div className="system-check">
@@ -172,6 +187,14 @@ class SystemCheck extends Component {
                     <List.Item extra="清除备份SN并重新收集"
                                onClick={() => this.showCleanBackupSnConfirm()}>
                         重新收集SN
+                    </List.Item>
+                    <List.Item
+                        extra={<Switch
+                            checked={displayAutoUnit === 'true'}
+                            onChange={value => {
+                                setDisplayAutoUnit(value).then(() => _this.refreshDisplayAutoUnitState())
+                            }}/>}>
+                        自动调整显示单位
                     </List.Item>
                 </List>
                 <List renderHeader={() => '数据库信息'}>

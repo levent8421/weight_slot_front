@@ -147,8 +147,7 @@ class SlotSetting extends Component {
             {
                 text: '确定',
                 onPress: () => {
-                    mergeSlotsByIds(slots.map(slot => slot.id)).then(() => {
-                        Toast.show('合并成功', 3, false);
+                    mergeSlotsByIds(slots.map(slot => slot.id)).then(res => {
                         this.fetchSlots();
                     }).catch(err => {
                         Toast.hide();

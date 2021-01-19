@@ -35,13 +35,29 @@ export const updateSoftFilterLevel = value => {
     });
 };
 
+export const fetchDisplayAutoUnit = () => {
+    return request({
+        url: '/api/config/application.display.auto_unit',
+        method: 'get',
+    });
+};
+
+export const setDisplayAutoUnit = autoUnit => {
+    return request({
+        url: '/api/config/application.display.auto_unit',
+        method: 'post',
+        data: {
+            value: autoUnit ? 'true' : 'false',
+            createIfNotExists: true,
+        },
+    });
+};
 export const fetchExtraPageUri = () => {
     return request({
         url: '/api/config/extra.page_uri',
         method: 'get',
     });
 };
-
 export const setExtraPageUri = uri => {
     return request({
         url: '/api/config/extra.page_uri',
