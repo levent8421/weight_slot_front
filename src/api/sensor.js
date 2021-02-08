@@ -83,3 +83,21 @@ export const cleanAllBackupSn = () => {
         method: 'post',
     });
 };
+
+export const calibrateZero = id => {
+    return request({
+        url: `/api/sensor/${id}/_calibrate-zero`,
+        method: 'post',
+        data: {},
+    });
+};
+
+export const calibrateWithSpan = sensor => {
+    return request({
+        url: `/api/sensor/${sensor.id}/_calibrate-span`,
+        method: 'post',
+        data: {
+            span: sensor.span,
+        }
+    });
+};
