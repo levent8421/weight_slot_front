@@ -103,3 +103,18 @@ export const toggleEnableState = slotId => {
         method: 'post',
     });
 };
+
+export const tare = id => {
+    return request({
+        url: `/api/slot/${id}/_tare`,
+        method: 'post',
+    });
+};
+
+export const tareWithValue = slot => {
+    return request({
+        url: `/api/slot/${slot.id}/_tare-with-value`,
+        method: 'post',
+        data: slot,
+    });
+};

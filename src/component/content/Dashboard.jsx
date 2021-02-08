@@ -80,6 +80,7 @@ class Dashboard extends Component {
 
     componentDidMount() {
         this.startFetchData();
+        console.log(this.props);
         this.props.showHeader(false);
         this.props.showTabBar(false);
         this.listenKeyPress();

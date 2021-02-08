@@ -10,6 +10,7 @@ import PidAnimation from './content/PidAnimation';
 import DStarAnimation from './content/DStarAnimation';
 import SlideAnimation from './content/SlideAnimation';
 import ExtraPage from './content/ExtraPage';
+import AsbogDashboard from './content/AsbogDashboard';
 import './AppContent.sass';
 import {connect} from 'react-redux';
 
@@ -43,6 +44,7 @@ class AppContent extends Component {
                     <Route path="/extra" component={ExtraPage} exact/>
                     <Route path="/dstar" component={DStarAnimation} exact/>
                     <Route path="/slide" component={SlideAnimation} exact/>
+                    <Route path="/asbog" component={AsbogDashboard} exact/>
                 </Switch>
                 <div className="tabBarMask"/>
             </div>

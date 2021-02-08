@@ -29,3 +29,14 @@ export const fetchDashboardData = () => {
         hideLoading: true,
     });
 };
+
+export const fetchDashboardDataByPrefix = prefix => {
+    return request({
+        url: '/api/dashboard/_data-for-prefix',
+        method: 'get',
+        hideLoading: true,
+        params: {
+            prefix
+        }
+    });
+};
