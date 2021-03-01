@@ -101,3 +101,13 @@ export const calibrateWithSpan = sensor => {
         }
     });
 };
+
+export const updateSensorType = (id, type) => {
+    return request({
+        url: `/api/sensor/${id}/type`,
+        method: 'post',
+        data: {
+            type: type,
+        }
+    });
+};

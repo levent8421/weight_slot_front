@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
-import {Button, List, Modal, Switch, TextareaItem, Toast} from 'antd-mobile';
+import {ActionSheet, Button, List, Modal, Switch, TextareaItem, Toast} from 'antd-mobile';
 import {setEnableTabBarAction, setTitle} from '../../../store/actionCreators';
 import {connect} from 'react-redux';
 import {fetchSystemInfo} from '../../../api/dashboard';
 import {reloadLibPath} from '../../../api/serial';
 import {stopWeightService} from '../../../api/sensor';
 import {withRouter} from 'react-router-dom';
+import {setProtocolVersion} from '../../../api/config';
 
+const VERSION_SELECTOR_OPTIONS = ['V21', 'V22', '取消'];
 const DATA_TO_SHOW = [
     {
         title: '应用名称',
@@ -71,6 +73,10 @@ class SystemSetting extends Component {
 
     componentDidMount() {
         this.props.setTitle('系统信息');
+        this.refreshConfig();
+    }
+
+    refreshConfig() {
         fetchSystemInfo().then(res => {
             this.setState({
                 systemInfo: res,
@@ -92,6 +98,11 @@ class SystemSetting extends Component {
                     }
                     <Item key="libPath" arrow="horizontal"
                           onClick={() => this.showLibLoadModal()}> 驱动路径: {systemInfo.libPath}</Item>
+                    <Item key="weight.protocol_version" arrow="horizontal"
+                          extra={systemInfo['weight.protocol_version']}
+                          onClick={() => this.showProtocolVersionSelector()}>
+                        协议版本
+                    </Item>
                 </List>
                 <List renderHeader={() => '系统设置'}>
                     <Item
@@ -132,6 +143,32 @@ class SystemSetting extends Component {
                 </Modal>
             </div>
         );
+    }
+
+    showProtocolVersionSelector() {
+        const _this = this;
+        ActionSheet.showActionSheetWithOptions({
+            options: VERSION_SELECTOR_OPTIONS,
+            cancelButtonIndex: VERSION_SELECTOR_OPTIONS.length - 1,
+            title: '协议版本',
+            message: '传感器协议版本选择'
+        }, value => {
+            let version;
+            switch (value) {
+                case 0:
+                    version = 1;
+                    break;
+                case 1:
+                    version = 2;
+                    break;
+                default:
+                    version = 0;
+            }
+            setProtocolVersion(version).then(() => {
+                Toast.show('协议版本设置成功', 3, false);
+                _this.refreshConfig();
+            });
+        });
     }
 
     setEnableTabBar(target) {

@@ -68,3 +68,14 @@ export const setExtraPageUri = uri => {
         }
     });
 };
+
+export const setProtocolVersion = version => {
+    return request({
+        url: '/api/config/weight.protocol_version',
+        method: 'post',
+        data: {
+            value: version,
+            createIfNotExists: true,
+        }
+    });
+};

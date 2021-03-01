@@ -1,15 +1,17 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {fetchDetail, toggleELabelState, toggleEnableState, updateSlot, zeroOne} from '../../../api/slot';
-import {ActionSheet, Button, InputItem, List, Switch, Toast, WingBlank} from 'antd-mobile';
+import {ActionSheet, Button, InputItem, List, Modal, Switch, Toast, WingBlank} from 'antd-mobile';
 import {setTitle} from "../../../store/actionCreators";
 import {connect} from 'react-redux';
 import FloatButton from '../../commons/FloatButton';
+import './SlotDetailSetting.sass';
 
 const ActionButtons = [
     '清零该货道',
     '删除货道',
     '停用/启用货道',
+    "锁定该货道",
     '取消',
 ];
 const {Item} = List;
@@ -19,6 +21,8 @@ const mapAction2Props = (dispatch, props) => {
         setTitle: (...args) => dispatch(setTitle(...args)),
     }
 };
+const CAN_UPDATE_SLOT_INFO = false;
+
 
 class SlotDetailSetting extends Component {
     constructor(props) {
@@ -43,6 +47,7 @@ class SlotDetailSetting extends Component {
 
     render() {
         const {slot} = this.state;
+        const sensors = slot.sensors || [];
         return (
             <div className="slotDetail">
                 <List renderHeader={() => '货道信息'}>
@@ -82,6 +87,13 @@ class SlotDetailSetting extends Component {
                         货道传感器管理
                     </List.Item>*/}
                 </List>
+                <List renderHeader={() => '传感器列表'}>
+                    {
+                        sensors.map(sensor => (<List.Item key={sensor.id} extra={sensor.deviceSn}>
+                            {sensor.address}
+                        </List.Item>))
+                    }
+                </List>
                 <FloatButton iconType="ellipsis" onClick={() => this.openOperation()}/>
             </div>
         );
@@ -104,10 +116,27 @@ class SlotDetailSetting extends Component {
                 case 2:
                     this.toggleEnableState();
                     break;
+                case 3:
+                    this.showLockModal();
+                    break;
                 default:
                 //Do nothing
             }
         });
+    }
+
+    showLockModal() {
+        Modal.prompt('输入锁定密码？', '确认标记该货道为不可拆分货道？\r\n注意：该操作不可逆！',
+            [
+                {
+                    text: '取消'
+                },
+                {
+                    text: '确认',
+                    onPress(password) {
+                        console.log('确认锁定', password);
+                    }
+                }], 'secure-text', null, '请输入操作密码');
     }
 
     toggleEnableState() {
@@ -132,9 +161,21 @@ class SlotDetailSetting extends Component {
     }
 
     applyModify() {
-        updateSlot(this.state.slot).then(() => {
-            Toast.show('Apply Success!');
-        });
+        Modal.alert("确认保存", "确认强制手动更新货道及物料信息？", [
+            {text: '取消'},
+            {
+                text: '更新',
+                onPress() {
+                    if (!CAN_UPDATE_SLOT_INFO) {
+                        Modal.alert("不支持该操作", "暂不支持在平板上更新货道信息", [{text: '知道了'}]);
+                        return;
+                    }
+                    updateSlot(this.state.slot).then(() => {
+                        Toast.show('Apply Success!');
+                    });
+                }
+            },
+        ]);
     }
 
     toggleELabel(hasELabel) {
