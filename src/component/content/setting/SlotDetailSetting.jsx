@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {fetchDetail, toggleELabelState, toggleEnableState, updateSlot, zeroOne} from '../../../api/slot';
+import {fetchDetail, toggleELabelState, toggleEnableState, updateSlot, zeroOne, lockSlot} from '../../../api/slot';
 import {ActionSheet, Button, InputItem, List, Modal, Switch, Toast, WingBlank} from 'antd-mobile';
 import {setTitle} from "../../../store/actionCreators";
 import {connect} from 'react-redux';
@@ -126,6 +126,7 @@ class SlotDetailSetting extends Component {
     }
 
     showLockModal() {
+        const _this = this;
         Modal.prompt('输入锁定密码？', '确认标记该货道为不可拆分货道？\r\n注意：该操作不可逆！',
             [
                 {
@@ -134,7 +135,9 @@ class SlotDetailSetting extends Component {
                 {
                     text: '确认',
                     onPress(password) {
-                        console.log('确认锁定', password);
+                        lockSlot(password,_this.slotId).then(res => {
+                            alert("锁定成功了"+res+"个货道")
+                        });
                     }
                 }], 'secure-text', null, '请输入操作密码');
     }

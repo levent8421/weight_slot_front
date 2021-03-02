@@ -118,3 +118,11 @@ export const tareWithValue = slot => {
         data: slot,
     });
 };
+
+export const lockSlot = (password,id) => {
+    return request({
+       url: `/api/slot/${id}/_lock`,
+       method: 'post',
+       data: {password:password},
+    });
+}
