@@ -88,6 +88,7 @@ class ConnectionSetting extends Component {
                 state: 1,
             },
             scanError: null,
+            tempHumScanProgressVisible: false,
         };
         this.props.setTitle('物理连接设置');
     }
@@ -150,10 +151,41 @@ class ConnectionSetting extends Component {
         });
     }
 
+
+
+
+
+
+
+    tempHumScanProgressVisible(){
+        if (this.humidityScanning) {
+            this.humidityScanning.stop();
+        }
+        this.setState({
+            tempHumScanProgressVisible: true
+        });
+
+
+
+    }
+
+    stopHumidityScanning() {
+        if (this.humidityScanning) {
+            this.humidityScanning.stop();
+            this.humidityScanning = null;
+        }
+        this.setState({
+            tempHumScanProgressVisible: false,
+        });
+    }
+
+
+
+
     render() {
         const {Item} = List;
         const {connections} = this.props;
-        const {createDialogVisible, scanProgressVisible, scanProgress} = this.state;
+        const {createDialogVisible, scanProgressVisible, scanProgress, tempHumScanProgressVisible} = this.state;
         const {create} = this.state;
         return (
             <div>
@@ -212,12 +244,12 @@ class ConnectionSetting extends Component {
                         }
                     </List>
                 </Modal>
-                <Modal visible={scanProgressVisible} title="扫描进度">
+                <Modal visible={scanProgressVisible} title="重力传感器扫描进度">
                     <WingBlank>
                         <Card>
                             <Card.Header title="扫描进度" extra={scanStateTable[scanProgress.state]}/>
                             <Card.Body>
-                                <Progress percent={scanProgress.progress} position="normal"/>
+                                <Progress percent={scanProgress.progress} position="normal" className="Progress"/>
                                 <Flex className="scan-overview">
                                     <Flex.Item>
                                         <p className="name">开始地址</p>
@@ -241,6 +273,57 @@ class ConnectionSetting extends Component {
                                     </Flex.Item>
                                 </Flex>
                                 <Button type="primary" onClick={() => this.stopFetchScanProgress()}>后台扫描</Button>
+                            </Card.Body>
+                        </Card>
+                        <Flex>
+                            <Flex.Item>
+                                <List renderHeader={() => '扫描结果:'}>
+                                    {scanProgress.result.map(item => (
+                                        <List.Item key={item.address} extra={item.address}>
+                                            {item.sensorSn}/{item.elabelSn}
+                                        </List.Item>))}
+                                </List>
+                            </Flex.Item>
+                            <Flex.Item>
+                                <List renderHeader={() => '错误信息:'}>
+                                    {
+                                        scanProgress.errors.map((item, index) => (
+                                            <List.Item key={index} extra={index}>{item}</List.Item>))
+                                    }
+                                </List>
+                            </Flex.Item>
+                        </Flex>
+                    </WingBlank>
+                </Modal>
+                <Modal title="温湿度传感器扫描进度" visible={tempHumScanProgressVisible} >
+                    <WingBlank>
+                        <Card>
+                            <Card.Header title="扫描进度"  extra={scanStateTable[scanProgress.state]}/>
+                            <Card.Body>
+                                <Progress  position="normal" />
+                                <Flex className="scan-overview">
+                                    <Flex.Item>
+                                        <p className="name">开始地址</p>
+                                        <p className="value">{scanProgress.start}</p>
+                                    </Flex.Item>
+                                    <Flex.Item>
+                                        <p className="name">结束地址</p>
+                                        <p className="value">{scanProgress.end}</p>
+                                    </Flex.Item>
+                                    <Flex.Item>
+                                        <p className="name">扫描进度</p>
+                                        <p className="value">{scanProgress.progress}%</p>
+                                    </Flex.Item>
+                                    <Flex.Item>
+                                        <p className="name">发现设备</p>
+                                        <p className="value">{scanProgress.result.length}</p>
+                                    </Flex.Item>
+                                    <Flex.Item>
+                                        <p className="name">正在扫描</p>
+                                        <p className="value">ADDR:{scanProgress.address}</p>
+                                    </Flex.Item>
+                                </Flex>
+                                <Button type="primary" onClick={() => this.stopHumidityScanning()}>后台扫描</Button>
                             </Card.Body>
                         </Card>
                         <Flex>
@@ -372,7 +455,7 @@ class ConnectionSetting extends Component {
                     text: '扫描',
                     onPress: () => {
                         startScanTempHumiSensors(connection.id).then(() => {
-                            Toast.show('扫描已开始!', 2, false)
+                            Toast.show('扫描已开始!', 2, false);
                         });
                     }
                 }
