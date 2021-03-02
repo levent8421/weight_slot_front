@@ -119,10 +119,11 @@ export const tareWithValue = slot => {
     });
 };
 
-export const lockSlot = (password,id) => {
+export const lockSlot = options => {
+    const {id} = options;
     return request({
-       url: `/api/slot/${id}/_lock`,
-       method: 'post',
-       data: {password:password},
+        url: `/api/slot/${id}/_lock`,
+        method: 'post',
+        data: options,
     });
 }

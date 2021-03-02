@@ -83,6 +83,9 @@ class SlotSetting extends Component {
         if (slot.id < 0 && sensors.length <= 0) {
             return
         }
+        if (slot.indivisible && sensors.length <= 0) {
+            return;
+        }
         return (<Item key={slot.id} arrow="horizontal" onClick={() => this.onItemClick(slot)}>
             <div className="slot-item">
                 <div className="cb-wrapper">

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {fetchDetail, toggleELabelState, toggleEnableState, updateSlot, zeroOne, lockSlot} from '../../../api/slot';
+import {fetchDetail, lockSlot, toggleELabelState, toggleEnableState, updateSlot, zeroOne} from '../../../api/slot';
 import {ActionSheet, Button, InputItem, List, Modal, Switch, Toast, WingBlank} from 'antd-mobile';
 import {setTitle} from "../../../store/actionCreators";
 import {connect} from 'react-redux';
@@ -135,11 +135,16 @@ class SlotDetailSetting extends Component {
                 {
                     text: '确认',
                     onPress(password) {
-                        lockSlot(password,_this.slotId).then(res => {
-                            alert("锁定成功了"+res+"个货道")
+                        const options = {
+                            id: _this.slotId,
+                            password,
+                            indivisible: true,
+                        };
+                        lockSlot(options).then(res => {
+                            Toast.show(`锁定成功了${res}个货道`, 3, false);
                         });
                     }
-                }], 'secure-text', null, '请输入操作密码');
+                }], 'secure-text', null, ['请输入操作密码']);
     }
 
     toggleEnableState() {
