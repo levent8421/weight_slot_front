@@ -42,6 +42,7 @@ class SlotDetailSetting extends Component {
         fetchDetail(this.slotId).then(res => {
             this.setState({slot: res});
             this.props.setTitle(`${res.slotNo} 货道设置`);
+            ActionButtons[3] = res.indivisible ? '解锁该货道' : '锁定该货道';
         })
     }
 
@@ -81,11 +82,12 @@ class SlotDetailSetting extends Component {
                             platform="android"/>}>
                         启用电子标签
                     </List.Item>
-                    {/*<List.Item
-                        arrow="horizontal"
-                        onClick={() => this.props.history.push({pathname: `/setting/slot-sensors/${slot.id}`})}>
-                        货道传感器管理
-                    </List.Item>*/}
+                    <List.Item extra={<Switch
+                        checked={slot.indivisible}
+                        platform="android"
+                        onChange={state => this.operateIndivisible(state)}/>}>
+                        锁定/解锁
+                    </List.Item>
                 </List>
                 <List renderHeader={() => '传感器列表'}>
                     {
@@ -97,6 +99,37 @@ class SlotDetailSetting extends Component {
                 <FloatButton iconType="ellipsis" onClick={() => this.openOperation()}/>
             </div>
         );
+    }
+
+    operateIndivisible(state) {
+        const title = state ? '确认锁定' : '确认解锁';
+        const message = state ? '确认标记该货道为锁定货道？' : '确认解锁当前货道？';
+        const _this = this;
+        Modal.prompt(title, message,
+            [
+                {
+                    text: '取消'
+                },
+                {
+                    text: '确认',
+                    onPress(password) {
+                        _this.doOperateIndivisible(state, password);
+                    }
+                }], 'secure-text', null, ['请输入操作密码']);
+    }
+
+    doOperateIndivisible(state, password) {
+        const {id} = this.state.slot;
+        const options = {
+            indivisible: state,
+            password,
+            id,
+        };
+        const _this = this;
+        lockSlot(options).then(res => {
+            Toast.show(`已成功锁定${res}个货道!`, 3, false);
+            _this.fetchSlotInfo();
+        });
     }
 
     openOperation() {
@@ -126,8 +159,13 @@ class SlotDetailSetting extends Component {
     }
 
     showLockModal() {
+        const {slot} = this.state;
+        const title = slot.indivisible ? '输入解锁密码？' : '输入锁定密码？';
+        const message = slot.indivisible ? '确认标记该货道为锁定货道？\r\n注意：该操作不可逆！' : '确认标记该货道为不可拆分货道？\r\n注意：该操作不可逆！';
+        const indivisible = slot.indivisible ? 'false' : 'true';
+        const states = slot.indivisible ? '解锁' : '锁定';
         const _this = this;
-        Modal.prompt('输入锁定密码？', '确认标记该货道为不可拆分货道？\r\n注意：该操作不可逆！',
+        Modal.prompt(title, message,
             [
                 {
                     text: '取消'
@@ -138,13 +176,14 @@ class SlotDetailSetting extends Component {
                         const options = {
                             id: _this.slotId,
                             password,
-                            indivisible: true,
+                            indivisible,
                         };
                         lockSlot(options).then(res => {
-                            Toast.show(`锁定成功了${res}个货道`, 3, false);
+                            Toast.show(`${states}成功了${res}个货道`, 3, false);
+                            _this.fetchSlotInfo();
                         });
                     }
-                }], 'secure-text', null, ['请输入操作密码']);
+                }], 'secure-text', null, [`请输入${states}密码`]);
     }
 
     toggleEnableState() {
@@ -192,6 +231,7 @@ class SlotDetailSetting extends Component {
             this.fetchSlotInfo();
         });
     }
+
 }
 
 export default withRouter(connect(null, mapAction2Props)(SlotDetailSetting));
